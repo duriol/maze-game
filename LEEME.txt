@@ -1,0 +1,29 @@
+═══════════════════════════════════════════════════════════════
+  MAZE GAME - INSTRUCCIONES PARA EJECUTAR
+═══════════════════════════════════════════════════════════════
+
+Este juego necesita un servidor web para funcionar correctamente.
+
+OPCIÓN A - Con Python (ya instalado en Mac):
+  1. Abre Terminal
+  2. Navega a esta carpeta:
+     cd [arrastra la carpeta aquí]
+  3. Ejecuta:
+     python3 -m http.server 8000
+  4. Abre tu navegador en: http://localhost:8000
+
+OPCIÓN B - Con Node.js (si lo tienes instalado):
+  1. Abre Terminal
+  2. Navega a esta carpeta
+  3. Ejecuta:
+     npx serve
+  4. Abre el URL que aparece en la terminal
+
+¡Diviértete jugando!
+
+Controles:
+  ← ↑ → ↓  - Mover
+  F        - Pantalla completa
+  E        - Usar espada (3 usos)
+
+═══════════════════════════════════════════════════════════════
