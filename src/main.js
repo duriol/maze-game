@@ -6,16 +6,24 @@ import GameOverScene from './scenes/GameOverScene.js';
 import VictoryScene from './scenes/VictoryScene.js';
 import MusicManager from './systems/MusicManager.js';
 
+const isMobile = window.matchMedia('(pointer: coarse)').matches;
+
 const config = {
   type: Phaser.AUTO,
   backgroundColor: '#000000',
-  scale: {
-    mode: Phaser.Scale.EXPAND,
-    parent: document.body,
-    width: 1280,
-    height: 720,
-    autoCenter: Phaser.Scale.CENTER_BOTH
-  },
+  scale: isMobile
+    ? {
+        mode: Phaser.Scale.RESIZE,
+        parent: document.body,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+      }
+    : {
+        mode: Phaser.Scale.EXPAND,
+        parent: document.body,
+        width: 1280,
+        height: 720,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+      },
   scene: [MenuScene, GameScene, HUDScene, GameOverScene, VictoryScene]
 };
 
