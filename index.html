@@ -8,9 +8,256 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #000; overflow: hidden; display: flex; justify-content: center; align-items: center; width: 100vw; height: 100vh; }
     canvas { display: block; }
+
+    /* ── Mobile virtual controls (touch devices only, during gameplay) ── */
+    #mobile-controls {
+      display: none;
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9998;
+    }
+    @media (pointer: coarse) {
+      body.game-active #mobile-controls { display: block; }
+    }
+
+    /* D-Pad */
+    #dpad {
+      position: absolute;
+      bottom: 24px;
+      left: 20px;
+      width: 156px;
+      height: 156px;
+      display: grid;
+      grid-template: repeat(3, 52px) / repeat(3, 52px);
+      pointer-events: auto;
+    }
+    .dpad-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1.5px solid rgba(255, 255, 255, 0.30);
+      border-radius: 10px;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 22px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .dpad-btn:active { background: rgba(255, 255, 255, 0.35); }
+    #btn-up    { grid-column: 2; grid-row: 1; }
+    #btn-left  { grid-column: 1; grid-row: 2; }
+    #btn-right { grid-column: 3; grid-row: 2; }
+    #btn-down  { grid-column: 2; grid-row: 3; }
+
+    /* Action buttons (bottom-right) */
+    #actions {
+      position: absolute;
+      bottom: 24px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+      pointer-events: auto;
+    }
+    .action-btn {
+      width: 58px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1.5px solid rgba(255, 255, 255, 0.30);
+      border-radius: 50%;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 24px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .action-btn:active { background: rgba(255, 255, 255, 0.35); }
+    #btn-sword { border-color: rgba(144, 202, 249, 0.55); }
+
+    /* Info button (top-right, visible on mobile during game) */
+    #info-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(124, 77, 255, 0.40);
+      border: 1.5px solid rgba(124, 77, 255, 0.70);
+      border-radius: 50%;
+      color: #fff;
+      font-size: 18px;
+      font-family: monospace;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      pointer-events: auto;
+      touch-action: manipulation;
+    }
+    #info-btn:active { background: rgba(124, 77, 255, 0.65); }
+
+    /* ── Info overlay (controls + legend, mobile) ── */
+    #info-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 10, 20, 0.94);
+      z-index: 10000;
+      overflow-y: auto;
+      padding: 16px;
+      font-family: monospace;
+      color: #c5cae9;
+      -webkit-overflow-scrolling: touch;
+    }
+    #info-overlay.visible { display: block; }
+    #info-close {
+      float: right;
+      background: rgba(124, 77, 255, 0.50);
+      border: 1px solid rgba(124, 77, 255, 0.80);
+      border-radius: 50%;
+      color: #fff;
+      font-size: 18px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-bottom: 8px;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #info-close:active { background: rgba(124, 77, 255, 0.75); }
+    #info-overlay h2 {
+      color: #7c4dff;
+      font-size: 13px;
+      margin: 16px 0 8px;
+      text-align: center;
+      letter-spacing: 1px;
+      clear: both;
+    }
+    #info-overlay h2:first-of-type { margin-top: 0; }
+    .info-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 5px;
+      align-items: baseline;
+    }
+    .info-key  { color: #ffd54f; min-width: 28px; font-size: 11px; }
+    .info-icon { min-width: 22px; font-size: 13px; }
+    .info-desc { color: #c5cae9; font-size: 11px; }
   </style>
-  <script type="module" crossorigin src="/maze-game/assets/index-DGiU_liN.js"></script>
+  <script type="module" crossorigin src="/maze-game/assets/index-bYNEZkeJ.js"></script>
 </head>
 <body>
+  <!-- ── Mobile virtual controls (touch devices only, during gameplay) ── -->
+  <div id="mobile-controls" aria-hidden="true">
+    <div id="dpad">
+      <div id="btn-up"    class="dpad-btn" aria-label="Arriba">▲</div>
+      <div id="btn-left"  class="dpad-btn" aria-label="Izquierda">◀</div>
+      <div id="btn-right" class="dpad-btn" aria-label="Derecha">▶</div>
+      <div id="btn-down"  class="dpad-btn" aria-label="Abajo">▼</div>
+    </div>
+    <div id="actions">
+      <div id="btn-sword" class="action-btn" aria-label="Usar espada">⚔</div>
+    </div>
+    <div id="info-btn" aria-label="Información">i</div>
+  </div>
+
+  <!-- ── Info overlay (controls + legend, mobile) ── -->
+  <div id="info-overlay" role="dialog" aria-modal="true" aria-label="Información del juego">
+    <div id="info-close" aria-label="Cerrar">✕</div>
+    <h2>— CONTROLES —</h2>
+    <div class="info-row"><span class="info-key">▲▼◀▶</span><span class="info-desc">Mover al jugador</span></div>
+    <div class="info-row"><span class="info-key">⚔</span><span class="info-desc">Usar espada (desactiva trampas)</span></div>
+    <h2>— OBJETIVO —</h2>
+    <div class="info-row"><span class="info-desc">🟢 Llega a la salida roja para avanzar.</span></div>
+    <div class="info-row"><span class="info-desc">🔦 Usa antorchas para ampliar tu visión.</span></div>
+    <div class="info-row"><span class="info-desc">🗝 Recoge llaves para abrir puertas.</span></div>
+    <div class="info-row"><span class="info-desc">🔵 Activa palancas en el orden correcto.</span></div>
+    <div class="info-row"><span class="info-desc">🛡 El escudo absorbe un golpe.</span></div>
+    <h2>— LEYENDA —</h2>
+    <div class="info-row"><span class="info-icon">👻</span><span class="info-desc">Kiro (tú)</span></div>
+    <div class="info-row"><span class="info-icon">🟧</span><span class="info-desc">Lambda / API Gateway (nv.1)</span></div>
+    <div class="info-row"><span class="info-icon">🟩</span><span class="info-desc">S3 (nv.1)</span></div>
+    <div class="info-row"><span class="info-icon">🟦</span><span class="info-desc">DynamoDB (nv.1)</span></div>
+    <div class="info-row"><span class="info-icon">🟥</span><span class="info-desc">IAM (nv.1)</span></div>
+    <div class="info-row"><span class="info-icon">🟪</span><span class="info-desc">CloudWatch / SNS (nv.1)</span></div>
+    <div class="info-row"><span class="info-icon">🦇</span><span class="info-desc">Murciélago (nv.2)</span></div>
+    <div class="info-row"><span class="info-icon">🕷</span><span class="info-desc">Araña (nv.2)</span></div>
+    <div class="info-row"><span class="info-icon">🟢</span><span class="info-desc">Entrada</span></div>
+    <div class="info-row"><span class="info-icon">🔴</span><span class="info-desc">Salida</span></div>
+    <div class="info-row"><span class="info-icon">🟪</span><span class="info-desc">Puerta cerrada</span></div>
+    <div class="info-row"><span class="info-icon">⬛</span><span class="info-desc">Puerta abierta</span></div>
+    <div class="info-row"><span class="info-icon">🔥</span><span class="info-desc">Trampa péndulo</span></div>
+    <div class="info-row"><span class="info-icon">💥</span><span class="info-desc">Proyectil</span></div>
+    <div class="info-row"><span class="info-icon">⚠</span><span class="info-desc">Pared / pinchos</span></div>
+    <div class="info-row"><span class="info-icon">🧪</span><span class="info-desc">Poción de vida</span></div>
+    <div class="info-row"><span class="info-icon">🔦</span><span class="info-desc">Antorcha</span></div>
+    <div class="info-row"><span class="info-icon">🗝</span><span class="info-desc">Llave</span></div>
+    <div class="info-row"><span class="info-icon">⚔</span><span class="info-desc">Espada</span></div>
+    <div class="info-row"><span class="info-icon">🛡</span><span class="info-desc">Escudo</span></div>
+    <div class="info-row"><span class="info-icon">🔘</span><span class="info-desc">Palanca (apagada)</span></div>
+    <div class="info-row"><span class="info-icon">🔆</span><span class="info-desc">Palanca (encendida)</span></div>
+  </div>
+
+  <script>
+    // ── Mobile virtual controls ────────────────────────────────────────────────
+    window.mobileCtrl = { up: false, down: false, left: false, right: false, sword: false };
+
+    function addMoveBtn(id, key) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        window.mobileCtrl[key] = true;
+        window.dispatchEvent(new Event('mobile-tap'));
+      }, { passive: false });
+      // Support click for desktop testing
+      el.addEventListener('mousedown', function() { window.mobileCtrl[key] = true; });
+    }
+
+    addMoveBtn('btn-up',    'up');
+    addMoveBtn('btn-down',  'down');
+    addMoveBtn('btn-left',  'left');
+    addMoveBtn('btn-right', 'right');
+    addMoveBtn('btn-sword', 'sword');
+
+    // ── Info overlay ────────────────────────────────────────────────────────────
+    var infoOverlay = document.getElementById('info-overlay');
+    var infoBtn     = document.getElementById('info-btn');
+    var infoClose   = document.getElementById('info-close');
+
+    function showInfo() { if (infoOverlay) infoOverlay.classList.add('visible'); }
+    function hideInfo() { if (infoOverlay) infoOverlay.classList.remove('visible'); }
+
+    if (infoBtn) {
+      infoBtn.addEventListener('touchstart', function(e) { e.preventDefault(); showInfo(); }, { passive: false });
+      infoBtn.addEventListener('click', showInfo);
+    }
+    if (infoClose) {
+      infoClose.addEventListener('touchstart', function(e) { e.preventDefault(); hideInfo(); }, { passive: false });
+      infoClose.addEventListener('click', hideInfo);
+    }
+    if (infoOverlay) {
+      infoOverlay.addEventListener('touchstart', function(e) {
+        if (e.target === infoOverlay) { e.preventDefault(); hideInfo(); }
+      }, { passive: false });
+      infoOverlay.addEventListener('click', function(e) {
+        if (e.target === infoOverlay) hideInfo();
+      });
+    }
+  </script>
 </body>
 </html>
