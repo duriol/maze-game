@@ -31,6 +31,7 @@
       display: grid;
       grid-template: repeat(3, 52px) / repeat(3, 52px);
       pointer-events: auto;
+      transform: rotate(45deg); /* Rotar para perspectiva isométrica */
     }
     .dpad-btn {
       display: flex;
@@ -163,10 +164,10 @@
   <!-- ── Mobile virtual controls (touch devices only, during gameplay) ── -->
   <div id="mobile-controls" aria-hidden="true">
     <div id="dpad">
-      <div id="btn-up"    class="dpad-btn" aria-label="Noreste (arriba-derecha isométrico)">↗</div>
-      <div id="btn-left"  class="dpad-btn" aria-label="Noroeste (arriba-izquierda isométrico)">↖</div>
-      <div id="btn-right" class="dpad-btn" aria-label="Sureste (abajo-derecha isométrico)">↘</div>
-      <div id="btn-down"  class="dpad-btn" aria-label="Suroeste (abajo-izquierda isométrico)">↙</div>
+      <div id="btn-up"    class="dpad-btn" aria-label="Arriba">↑</div>
+      <div id="btn-left"  class="dpad-btn" aria-label="Izquierda">←</div>
+      <div id="btn-right" class="dpad-btn" aria-label="Derecha">→</div>
+      <div id="btn-down"  class="dpad-btn" aria-label="Abajo">↓</div>
     </div>
     <div id="actions">
       <div id="btn-sword" class="action-btn" aria-label="Usar espada">⚔</div>
@@ -178,7 +179,7 @@
   <div id="info-overlay" role="dialog" aria-modal="true" aria-label="Información del juego">
     <div id="info-close" aria-label="Cerrar">✕</div>
     <h2>— CONTROLES —</h2>
-    <div class="info-row"><span class="info-key">↗↙↖↘</span><span class="info-desc">Mover al jugador (isométrico)</span></div>
+    <div class="info-row"><span class="info-key">↑↓←→</span><span class="info-desc">Mover al jugador</span></div>
     <div class="info-row"><span class="info-key">⚔</span><span class="info-desc">Usar espada (desactiva trampas)</span></div>
     <h2>— OBJETIVO —</h2>
     <div class="info-row"><span class="info-desc">🟢 Llega a la salida roja para avanzar.</span></div>

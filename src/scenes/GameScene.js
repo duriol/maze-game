@@ -80,44 +80,28 @@ export default class GameScene extends Phaser.Scene {
       else this.scale.startFullscreen();
     });
 
-    // Unlock Web Audio on first keypress (browser policy) and start music
-    this.input.keyboard.once('keydown', () => {
-      if (this._music) {
-        // Unlock audio context if not already done
-        if (!this._music.ctx) {
-          this._music.unlock();
-        }
-        // Stop any previous music and start level music
-        this._music.stop();
-        if (this._music.ctx && this._music.ctx.state === 'suspended') {
-          this._music.ctx.resume().then(() => {
-            this._music.play(this.levelId);
-          });
-        } else {
-          this._music.play(this.levelId);
-        }
-      }
-    });
-
-    // Unlock Web Audio on first touch/pointer (mobile) and start music
-    const unlockAudioOnce = () => {
+    // Unified music start function
+    const startLevelMusic = () => {
+      if (!this._music) return;
+      if (!this._music.ctx) this._music.unlock();
       if (this._audioCtx && this._audioCtx.state === 'suspended') {
         this._audioCtx.resume();
       }
-      if (this._music) {
-        if (!this._music.ctx) this._music.unlock();
-        this._music.stop();
-        if (this._music.ctx && this._music.ctx.state === 'suspended') {
-          this._music.ctx.resume().then(() => {
-            if (this._music) this._music.play(this.levelId);
-          });
-        } else {
-          this._music.play(this.levelId);
-        }
+      if (this._music.ctx && this._music.ctx.state === 'suspended') {
+        this._music.ctx.resume().then(() => {
+          if (this._music) this._music.play(this.levelId);
+        });
+      } else {
+        this._music.play(this.levelId);
       }
     };
-    this.input.once('pointerdown', unlockAudioOnce);
-    this._mobileTapHandler = unlockAudioOnce;
+
+    // Unlock Web Audio on first keypress (browser policy) and start music
+    this.input.keyboard.once('keydown', startLevelMusic);
+    
+    // Unlock Web Audio on first touch/pointer (mobile) and start music
+    this.input.once('pointerdown', startLevelMusic);
+    this._mobileTapHandler = startLevelMusic;
     window.addEventListener('mobile-tap', this._mobileTapHandler, { once: true });
 
     // Fade in on start

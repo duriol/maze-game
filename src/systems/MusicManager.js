@@ -11,6 +11,7 @@ export default class MusicManager {
     this.timeouts    = [];
     this.running     = false;
     this._pendingId  = null; // pending play call
+    this.currentTrack = null; // track currently playing
   }
 
   /** Call once on first user gesture to unlock audio */
@@ -25,6 +26,7 @@ export default class MusicManager {
 
   stop() {
     this.running = false;
+    this.currentTrack = null;
     if (this._pendingId) { clearTimeout(this._pendingId); this._pendingId = null; }
     this.timeouts.forEach(id => clearTimeout(id));
     this.timeouts = [];
@@ -38,7 +40,14 @@ export default class MusicManager {
 
   play(trackId) {
     if (!this.ctx) return;
+    
+    // Prevenir reinicio del mismo track si ya está sonando
+    if (this.running && this.currentTrack === trackId) {
+      return;
+    }
+    
     this.stop();
+    this.currentTrack = trackId;
 
     const doPlay = () => {
       if (!this.ctx) return;
