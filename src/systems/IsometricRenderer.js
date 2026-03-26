@@ -1022,6 +1022,120 @@ export default class IsometricRenderer {
     }
   }
 
+  // ── Mine — dormant bomb that explodes after a 3-second countdown ─────────────
+  drawMine(gx, gy, activated, timerMs) {
+    const s  = tileToScreen(gx, gy);
+    const cx = s.x + this.offsetX + TILE_W / 2;
+    const cy = s.y + this.offsetY + TILE_H / 2;
+    const g  = this.entityGraphics;
+    const t  = Date.now();
+
+    if (!activated) {
+      // Dormant mine — dark metallic sphere with warning stripe
+      g.fillStyle(0x212121, 0.5);
+      g.fillCircle(cx + 2, cy + 2, 9);
+      g.fillStyle(0x37474f, 1);
+      g.fillCircle(cx, cy, 9);
+      g.fillStyle(0x546e7a, 0.7);
+      g.fillCircle(cx - 2, cy - 2, 4);
+      // Warning stripe
+      g.fillStyle(0xffb300, 0.85);
+      g.fillRect(cx - 9, cy - 2, 18, 4);
+      g.fillStyle(0x37474f, 1);
+      g.fillRect(cx - 9, cy - 2, 4, 4);
+      g.fillRect(cx + 1, cy - 2, 4, 4);
+      // Fuse
+      g.lineStyle(2, 0x8d6e63, 1);
+      g.lineBetween(cx, cy - 9, cx + 3, cy - 14);
+      g.fillStyle(0xff6f00, 0.6);
+      g.fillCircle(cx + 3, cy - 14, 2);
+    } else {
+      // Activated — blink with increasing speed, glow red/orange
+      const secsLeft  = Math.max(0, timerMs / 1000);
+      const blinkHz   = Math.min(12, 1 + (3 - secsLeft) * 4); // 1→12 Hz
+      const blinkMs   = 1000 / blinkHz;
+      const blink     = (t % blinkMs) < blinkMs * 0.5;
+      const intensity = 1 - secsLeft / 3; // 0 → 1 as it approaches explosion
+
+      // Outer danger glow
+      if (blink) {
+        g.fillStyle(0xff1744, 0.15 + intensity * 0.35);
+        g.fillCircle(cx, cy, 18 + intensity * 6);
+      }
+
+      // Mine body
+      g.fillStyle(0x212121, 0.5);
+      g.fillCircle(cx + 2, cy + 2, 9);
+      g.fillStyle(blink ? 0xb71c1c : 0x37474f, 1);
+      g.fillCircle(cx, cy, 9);
+      g.fillStyle(blink ? 0xef5350 : 0x546e7a, 0.7);
+      g.fillCircle(cx - 2, cy - 2, 4);
+
+      // Pulsing warning stripe
+      g.fillStyle(blink ? 0xff1744 : 0xffb300, 0.9);
+      g.fillRect(cx - 9, cy - 2, 18, 4);
+
+      // Fuse spark
+      g.lineStyle(2, 0x8d6e63, 1);
+      g.lineBetween(cx, cy - 9, cx + 3, cy - 14);
+      if (blink) {
+        g.fillStyle(0xffd54f, 1);
+        g.fillCircle(cx + 3, cy - 14, 3);
+        g.fillStyle(0xff6f00, 0.8);
+        for (let i = 0; i < 4; i++) {
+          const a = (t * 0.01 + i * 1.57) % (Math.PI * 2);
+          g.fillCircle(cx + 3 + Math.cos(a) * 5, cy - 14 + Math.sin(a) * 5, 1.5);
+        }
+      }
+    }
+  }
+
+  /**
+   * Draw the blinking explosion-area tiles around an activated mine.
+   * Called once per activated mine before the fog overlay is drawn.
+   */
+  drawMineExplosionArea(gx, gy, radius, timerMs, fogManager) {
+    const secsLeft = Math.max(0, timerMs / 1000);
+    const blinkHz  = Math.min(12, 1 + (3 - secsLeft) * 4);
+    const blinkMs  = 1000 / blinkHz;
+    const blink    = (Date.now() % blinkMs) < blinkMs * 0.5;
+    if (!blink) return;
+
+    const intensity = 1 - secsLeft / 3;
+    const alpha = 0.25 + intensity * 0.35;
+
+    for (let dy = -radius; dy <= radius; dy++) {
+      for (let dx = -radius; dx <= radius; dx++) {
+        if (dx === 0 && dy === 0) continue; // mine tile itself
+        const tx = gx + dx;
+        const ty = gy + dy;
+        if (fogManager && fogManager.getVisibility(tx, ty) === 'dark') continue;
+
+        const s  = tileToScreen(tx, ty);
+        const cx = s.x + this.offsetX + TILE_W / 2;
+        const cy = s.y + this.offsetY;
+        const hw = TILE_W / 2;
+        const hh = TILE_H / 2;
+
+        this.entityGraphics.fillStyle(0xff1744, alpha);
+        this.entityGraphics.fillPoints([
+          { x: cx,      y: cy },
+          { x: cx + hw, y: cy + hh },
+          { x: cx,      y: cy + TILE_H },
+          { x: cx - hw, y: cy + hh }
+        ], true);
+
+        this.entityGraphics.lineStyle(2, 0xff6f00, alpha + 0.1);
+        this.entityGraphics.strokePoints([
+          { x: cx,      y: cy },
+          { x: cx + hw, y: cy + hh },
+          { x: cx,      y: cy + TILE_H },
+          { x: cx - hw, y: cy + hh }
+        ], true);
+      }
+    }
+  }
+
   // ── Switch / Lever — 3D button ────────────────────────────────────────────────
   _drawSwitch(cx, cy, isOn) {
     const g = this.entityGraphics;

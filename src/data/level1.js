@@ -33,6 +33,11 @@ export default {
     { id: 't2', type: 'MOVING_WALL', path: [{x:9,y:3},{x:11,y:3}], speed: 1.0 }
   ],
 
+  mines: [
+    { id: 'm1', gridX: 5, gridY: 9,  radius: 1 },
+    { id: 'm2', gridX: 12, gridY: 11, radius: 1 }
+  ],
+
   enemies: [
     { id: 'e1', patrolPath: [{x:3,y:9},{x:3,y:11},{x:5,y:11},{x:5,y:9}], speed: 0.8 }
   ],
@@ -56,7 +61,7 @@ export default {
   ],
 
   wallHints: [
-    { x: 2, y: 5,  text: 'La secuencia correcta empieza por el norte...' },
-    { x: 8, y: 9,  text: 'Sigue el camino de las antorchas hacia la salida.' }
+    { x: 2, y: 5,  text: 'Hay una palanca al norte de aquí. Actívala primero antes que la del centro.' },
+    { x: 8, y: 9,  text: 'La segunda palanca está al noreste. Con ambas activas, se abre el paso al sur. Cuidado: el suelo oculta trampas.' }
   ]
 };

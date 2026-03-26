@@ -163,10 +163,10 @@
   <!-- ── Mobile virtual controls (touch devices only, during gameplay) ── -->
   <div id="mobile-controls" aria-hidden="true">
     <div id="dpad">
-      <div id="btn-up"    class="dpad-btn" aria-label="Arriba">▲</div>
-      <div id="btn-left"  class="dpad-btn" aria-label="Izquierda">◀</div>
-      <div id="btn-right" class="dpad-btn" aria-label="Derecha">▶</div>
-      <div id="btn-down"  class="dpad-btn" aria-label="Abajo">▼</div>
+      <div id="btn-up"    class="dpad-btn" aria-label="Noreste (arriba-derecha isométrico)">↗</div>
+      <div id="btn-left"  class="dpad-btn" aria-label="Noroeste (arriba-izquierda isométrico)">↖</div>
+      <div id="btn-right" class="dpad-btn" aria-label="Sureste (abajo-derecha isométrico)">↘</div>
+      <div id="btn-down"  class="dpad-btn" aria-label="Suroeste (abajo-izquierda isométrico)">↙</div>
     </div>
     <div id="actions">
       <div id="btn-sword" class="action-btn" aria-label="Usar espada">⚔</div>
@@ -178,7 +178,7 @@
   <div id="info-overlay" role="dialog" aria-modal="true" aria-label="Información del juego">
     <div id="info-close" aria-label="Cerrar">✕</div>
     <h2>— CONTROLES —</h2>
-    <div class="info-row"><span class="info-key">▲▼◀▶</span><span class="info-desc">Mover al jugador</span></div>
+    <div class="info-row"><span class="info-key">↗↙↖↘</span><span class="info-desc">Mover al jugador (isométrico)</span></div>
     <div class="info-row"><span class="info-key">⚔</span><span class="info-desc">Usar espada (desactiva trampas)</span></div>
     <h2>— OBJETIVO —</h2>
     <div class="info-row"><span class="info-desc">🟢 Llega a la salida roja para avanzar.</span></div>
@@ -186,6 +186,7 @@
     <div class="info-row"><span class="info-desc">🗝 Recoge llaves para abrir puertas.</span></div>
     <div class="info-row"><span class="info-desc">🔵 Activa palancas en el orden correcto.</span></div>
     <div class="info-row"><span class="info-desc">🛡 El escudo absorbe un golpe.</span></div>
+    <div class="info-row"><span class="info-desc">💣 ¡Huye de las minas antes de que exploten!</span></div>
     <h2>— LEYENDA —</h2>
     <div class="info-row"><span class="info-icon">👻</span><span class="info-desc">Kiro (tú)</span></div>
     <div class="info-row"><span class="info-icon">🟧</span><span class="info-desc">Lambda / API Gateway (nv.1)</span></div>
@@ -202,6 +203,7 @@
     <div class="info-row"><span class="info-icon">🔥</span><span class="info-desc">Trampa péndulo</span></div>
     <div class="info-row"><span class="info-icon">💥</span><span class="info-desc">Proyectil</span></div>
     <div class="info-row"><span class="info-icon">⚠</span><span class="info-desc">Pared / pinchos</span></div>
+    <div class="info-row"><span class="info-icon">💣</span><span class="info-desc">Mina (explota en 3s al pisarla)</span></div>
     <div class="info-row"><span class="info-icon">🧪</span><span class="info-desc">Poción de vida</span></div>
     <div class="info-row"><span class="info-icon">🔦</span><span class="info-desc">Antorcha</span></div>
     <div class="info-row"><span class="info-icon">🗝</span><span class="info-desc">Llave</span></div>

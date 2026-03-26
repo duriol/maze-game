@@ -35,6 +35,12 @@ export default {
     { id: 't4', type: 'SPIKE',       path: [{x:13,y:11},{x:13,y:13}], speed: 1.0 }
   ],
 
+  mines: [
+    { id: 'm1', gridX: 3,  gridY: 9,  radius: 1 },
+    { id: 'm2', gridX: 17, gridY: 5,  radius: 1 },
+    { id: 'm3', gridX: 9,  gridY: 15, radius: 1 }
+  ],
+
   enemies: [
     { id: 'e1', patrolPath: [{x:3,y:7},{x:3,y:11},{x:7,y:11},{x:7,y:7}], speed: 1.0 },
     { id: 'e2', patrolPath: [{x:13,y:5},{x:17,y:5},{x:17,y:9},{x:13,y:9}], speed: 1.2 }
@@ -61,8 +67,8 @@ export default {
   ],
 
   wallHints: [
-    { x: 4,  y: 3,  text: 'Tres palancas guardan el paso. El orden importa.' },
-    { x: 10, y: 7,  text: 'La segunda palanca está al centro del laberinto.' },
-    { x: 14, y: 13, text: 'La última palanca abre el camino a la salida.' }
+    { x: 4,  y: 3,  text: 'Tres palancas guardan el paso sur. Actívalas en orden: noroeste, centro, sureste.' },
+    { x: 10, y: 7,  text: 'Segunda palanca encontrada. La tercera está al sureste, cerca de la salida.' },
+    { x: 14, y: 13, text: 'Última palanca. Actívala y el camino a la salida quedará abierto.' }
   ]
 };

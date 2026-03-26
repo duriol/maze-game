@@ -49,6 +49,14 @@ export default {
     { id: 't8', type: 'SPIKE',       path: [{x:18,y:20},{x:25,y:20}], speed: 1.6 }
   ],
 
+  mines: [
+    { id: 'm1', gridX: 7,  gridY: 11, radius: 2 },
+    { id: 'm2', gridX: 21, gridY: 9,  radius: 2 },
+    { id: 'm3', gridX: 9,  gridY: 19, radius: 2 },
+    { id: 'm4', gridX: 23, gridY: 19, radius: 2 },
+    { id: 'm5', gridX: 3,  gridY: 23, radius: 2 }
+  ],
+
   enemies: [
     { id: 'e1', patrolPath: [{x:3,y:9},{x:3,y:17},{x:11,y:17},{x:11,y:9}],     speed: 1.6 },
     { id: 'e2', patrolPath: [{x:16,y:5},{x:24,y:5},{x:24,y:13},{x:16,y:13}],   speed: 1.8 },
@@ -90,10 +98,10 @@ export default {
   ],
 
   wallHints: [
-    { x: 6,  y: 4,  text: 'El laberinto se está volviendo cada vez más peligroso...' },
-    { x: 15, y: 12, text: 'Los enemigos son más rápidos aquí. Ten cuidado.' },
-    { x: 22, y: 20, text: 'La espada solo tiene 3 usos. Úsala sabiamente.' },
-    { x: 8,  y: 15, text: 'Las trampas son más mortales en estos niveles profundos.' },
-    { x: 19, y: 22, text: 'La salida está cerca, pero el camino es traicionero.' }
+    { x: 6,  y: 4,  text: 'Primera palanca al noroeste. El orden es: noroeste → centro → sureste. Los enemigos aquí son más rápidos.' },
+    { x: 15, y: 12, text: 'Segunda palanca encontrada. La espada está cerca al noreste. Úsala con cuidado: solo 3 usos.' },
+    { x: 22, y: 20, text: 'Tercera palanca al sureste. Dos accesos secundarios requieren sus propias palancas para abrirse.' },
+    { x: 8,  y: 15, text: 'Palanca secundaria aquí. Su par está al sureste. Las minas en este nivel explotan con radio mayor.' },
+    { x: 19, y: 22, text: 'La salida está al sureste, pero el suelo está minado. Elige tu camino con cuidado.' }
   ]
 };

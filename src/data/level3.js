@@ -42,6 +42,13 @@ export default {
     { id: 't6', type: 'PROJECTILE',  path: [{x:7,y:19},{x:19,y:19}],  speed: 3.5 }
   ],
 
+  mines: [
+    { id: 'm1', gridX: 3,  gridY: 9,  radius: 1 },
+    { id: 'm2', gridX: 21, gridY: 7,  radius: 1 },
+    { id: 'm3', gridX: 11, gridY: 13, radius: 1 },
+    { id: 'm4', gridX: 21, gridY: 17, radius: 1 }
+  ],
+
   enemies: [
     { id: 'e1', patrolPath: [{x:3,y:7},{x:3,y:13},{x:9,y:13},{x:9,y:7}],   speed: 1.2 },
     { id: 'e2', patrolPath: [{x:13,y:5},{x:21,y:5},{x:21,y:11},{x:13,y:11}], speed: 1.4 },
@@ -79,10 +86,10 @@ export default {
   ],
 
   wallHints: [
-    { x: 4,  y: 3,  text: 'El primer sello está en el norte. Búscalo.' },
-    { x: 12, y: 9,  text: 'El segundo sello guarda el corazón del laberinto.' },
-    { x: 18, y: 15, text: 'El tercer sello abre el camino final.' },
-    { x: 6,  y: 13, text: 'Dos puertas secundarias bloquean atajos. Encuéntralos.' },
-    { x: 16, y: 19, text: 'La oscuridad es tu mayor enemigo. Usa la antorcha con sabiduría.' }
+    { x: 4,  y: 3,  text: 'Tres sellos cierran el paso final. El primero está aquí al noroeste. Memorizarás el orden.' },
+    { x: 12, y: 9,  text: 'Segundo sello encontrado. El tercero está al sureste. Actívalos: noroeste → centro → sureste.' },
+    { x: 18, y: 15, text: 'Tercer y último sello principal. Hay además dos puertas secundarias con sus propias palancas.' },
+    { x: 6,  y: 13, text: 'Primera palanca de acceso secundario. Su par está al sureste, en el pasillo inferior.' },
+    { x: 16, y: 19, text: 'Hay minas ocultas en los pasillos. El suelo marcado con negro es peligroso. Huye rápido si las pisas.' }
   ]
 };
