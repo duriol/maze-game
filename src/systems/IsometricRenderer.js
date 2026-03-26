@@ -30,13 +30,13 @@ const C = {
 };
 
 export default class IsometricRenderer {
-  constructor(tileGfx, entityGfx, mapData, sceneWidth, sceneHeight) {
+  constructor(tileGfx, entityGfx, mapData, sceneWidth, sceneHeight, panelW = 188) {
     this.tileGraphics = tileGfx;
     this.entityGraphics = entityGfx;
     this.mapData = mapData;
     this.sceneWidth = sceneWidth;
     this.sceneHeight = sceneHeight;
-    this.PANEL_W = 188;
+    this.PANEL_W = panelW;
     this.TOP_BAR = 64;
     this.playW = sceneWidth - this.PANEL_W * 2;
     this.playH = sceneHeight - this.TOP_BAR;
