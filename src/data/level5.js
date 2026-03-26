@@ -56,6 +56,15 @@ export default {
     { id: 't10', type: 'PROJECTILE',  path: [{x:5,y:20},{x:20,y:20}],   speed: 5.2 }
   ],
 
+  mines: [
+    { id: 'm1', gridX: 9,  gridY: 9,  radius: 2 },
+    { id: 'm2', gridX: 25, gridY: 7,  radius: 2 },
+    { id: 'm3', gridX: 7,  gridY: 23, radius: 2 },
+    { id: 'm4', gridX: 19, gridY: 17, radius: 2 },
+    { id: 'm5', gridX: 27, gridY: 21, radius: 2 },
+    { id: 'm6', gridX: 13, gridY: 29, radius: 2 }
+  ],
+
   enemies: [
     { id: 'e1', patrolPath: [{x:3,y:9},{x:3,y:21},{x:13,y:21},{x:13,y:9}],       speed: 2.0 },
     { id: 'e2', patrolPath: [{x:19,y:5},{x:29,y:5},{x:29,y:17},{x:19,y:17}],     speed: 2.2 },
@@ -104,10 +113,10 @@ export default {
   ],
 
   wallHints: [
-    { x: 7,  y: 5,  text: 'El nivel final... Solo los más valientes llegan aquí.' },
-    { x: 17, y: 15, text: 'La oscuridad es casi total. Mantén tus ojos abiertos.' },
-    { x: 27, y: 25, text: 'Los relámpagos iluminarán tu camino brevemente...' },
-    { x: 10, y: 18, text: 'Los enemigos abundan. No bajes la guardia ni un segundo.' },
-    { x: 22, y: 28, text: 'La victoria está cerca... Pero también la muerte.' }
+    { x: 7,  y: 5,  text: 'El nivel final. Tres sellos abren la puerta principal: noroeste → centro → sureste. Los relámpagos iluminarán tu camino brevemente.' },
+    { x: 17, y: 15, text: 'Segundo sello. La oscuridad es casi total. Hay minas en los pasillos: el suelo oscuro oculta peligros. Huye si pisas una.' },
+    { x: 27, y: 25, text: 'Tercer sello final. Dos puertas secundarias requieren palancas adicionales. Actívalas en orden.' },
+    { x: 10, y: 18, text: 'Primera palanca secundaria. La segunda está al sureste, en el fondo del laberinto. Los enemigos no descansan.' },
+    { x: 22, y: 28, text: 'La victoria está cerca... pero también la muerte. El suelo está minado. Elige cada paso con cuidado.' }
   ]
 };

@@ -6,6 +6,7 @@ import TrapManager from '../systems/TrapManager.js';
 import EnemyManager from '../systems/EnemyManager.js';
 import ItemManager from '../systems/ItemManager.js';
 import PuzzleManager from '../systems/PuzzleManager.js';
+import MineManager from '../systems/MineManager.js';
 import AudioManager from '../systems/AudioManager.js';
 import LevelManager from '../systems/LevelManager.js';
 import level1 from '../data/level1.js';
@@ -200,6 +201,22 @@ export default class GameScene extends Phaser.Scene {
         this._beep(200, 'square', 0.2, 0.4, 0.2);
         this._beep(150, 'sawtooth', 0.15, 0.5, 0.35);
         break;
+      case 'mine_activate':
+        // High-pitched beep — mine armed
+        this._beep(900, 'square', 0.08, 0.25);
+        this._beep(700, 'square', 0.06, 0.2, 0.1);
+        break;
+      case 'mine_tick':
+        // Sharp click — each countdown second
+        this._beep(440, 'square', 0.04, 0.15);
+        break;
+      case 'mine_explode':
+        // Deep boom + crack
+        this._beep(60,  'sawtooth', 0.4,  0.9);
+        this._beep(120, 'sawtooth', 0.3,  0.7, 0.05);
+        this._beep(300, 'square',   0.15, 0.5, 0.1);
+        this._beep(80,  'sawtooth', 0.35, 0.8, 0.2);
+        break;
     }
   }
 
@@ -234,6 +251,7 @@ export default class GameScene extends Phaser.Scene {
     this.enemyManager  = new EnemyManager(scaledEnemies);
     this.itemManager   = new ItemManager(this.mapData.items);
     this.puzzleManager = new PuzzleManager(this.mapData.puzzles, this.mapData.wallHints);
+    this.mineManager   = new MineManager(this.mapData.mines || []);
     this.audioManager  = new AudioManager(this);
     this.levelManager  = new LevelManager();
     this.levelManager.currentLevel = levelId;
@@ -242,6 +260,34 @@ export default class GameScene extends Phaser.Scene {
       this.tiles[doorPos.y][doorPos.x] = T.DOOR_OPEN;
       this._playSound('door_open');
       this.game.events.emit('hud-hint', '¡Puerta abierta!');
+    };
+
+    // Mine callbacks — explosion and per-second tick
+    this.mineManager.onExplode = (mine) => {
+      this._playSound('mine_explode');
+      this.cameras.main.shake(300, 0.02);
+      // Flash the screen orange briefly
+      const flash = this.add.rectangle(
+        this.scale.width / 2, this.scale.height / 2,
+        this.scale.width, this.scale.height,
+        0xff6f00, 0.6
+      );
+      flash.setDepth(1000);
+      this.tweens.add({
+        targets: flash, alpha: 0, duration: 350, ease: 'Power2',
+        onComplete: () => flash.destroy()
+      });
+      // Damage player if in blast radius
+      if (!this.damageThisFrame && this.mineManager.isInExplosionRange(mine, this.player.gridX, this.player.gridY)) {
+        this._damagePlayer();
+      }
+      this.game.events.emit('hud-hint', '💣 ¡Explosión!');
+    };
+    this.mineManager.onTick = (mine, secondsLeft) => {
+      this._playSound('mine_tick');
+      if (secondsLeft > 0) {
+        this.game.events.emit('hud-hint', `💣 Mina activada — ${secondsLeft}s`);
+      }
     };
 
     this.fog.recalculate(this.player.gridX, this.player.gridY);
@@ -314,6 +360,7 @@ export default class GameScene extends Phaser.Scene {
     this.fog.update(delta);
     this.trapManager.update(delta);
     this.enemyManager.update(delta);
+    this.mineManager.update(delta);
 
     // --- Collision checks ---
     if (!this.damageThisFrame) {
@@ -393,6 +440,13 @@ export default class GameScene extends Phaser.Scene {
       if (item.type === 'TORCH') {
         this.fog.activateTorch(30000);
       }
+    }
+
+    // Mine activation — player stepped on a mine
+    const mine = this.mineManager.tryActivate(px, py);
+    if (mine) {
+      this._playSound('mine_activate');
+      this.game.events.emit('hud-hint', '💣 ¡Mina activada! ¡Aléjate en 3 segundos!');
     }
 
     // Switch activation
@@ -550,6 +604,19 @@ export default class GameScene extends Phaser.Scene {
       if (this.fog.isVisible(sw.gridX, sw.gridY)) {
         const colorKey = sw.activated ? 'SWITCH_ON' : 'SWITCH_OFF';
         this.renderer.drawEntity(sw.gridX, sw.gridY, colorKey);
+      }
+    }
+
+    // Mines — draw explosion area first (behind the mine graphic), then the mine
+    for (const mine of this.mineManager.getActivatedMines()) {
+      // Explosion area blink (drawn behind fog, so always visible when activated)
+      this.renderer.drawMineExplosionArea(
+        mine.gridX, mine.gridY, mine.radius, mine.explodeTimer, this.fog
+      );
+    }
+    for (const mine of this.mineManager.getMines()) {
+      if (this.fog.isVisible(mine.gridX, mine.gridY)) {
+        this.renderer.drawMine(mine.gridX, mine.gridY, mine.activated, mine.explodeTimer);
       }
     }
   }
