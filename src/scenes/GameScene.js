@@ -31,11 +31,8 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create() {
-    const { width, height } = this.scale;
     const isMobile = window.matchMedia('(pointer: coarse)').matches;
-    const PANEL_W = isMobile ? 0 : 188, TOP_BAR = 64;
-    const playX = PANEL_W, playY = TOP_BAR;
-    const playW = width - PANEL_W * 2, playH = height - TOP_BAR;
+    const PANEL_W = isMobile ? 0 : 188;
     this._panelW = PANEL_W;
 
     // Show virtual controls on mobile
@@ -48,11 +45,10 @@ export default class GameScene extends Phaser.Scene {
     this._wallFrontGfx = this.add.graphics().setDepth(150); // Walls in front of player
     this._fogGfx       = this.add.graphics().setDepth(500); // Fog (top)
 
-    // Apply a rectangular mask so map never bleeds into side panels or top bar
-    const maskShape = this.make.graphics({ add: false });
-    maskShape.fillStyle(0xffffff);
-    maskShape.fillRect(playX, playY, playW, playH);
-    const mask = maskShape.createGeometryMask();
+    // Apply a rectangular mask so map never bleeds into side panels or top bar.
+    // Store maskShape as an instance variable so it can be updated on resize.
+    this._maskShape = this.make.graphics({ add: false });
+    const mask = this._maskShape.createGeometryMask();
     this._tileGfx.setMask(mask);
     this._wallBackGfx.setMask(mask);
     this._entityGfx.setMask(mask);
@@ -61,9 +57,12 @@ export default class GameScene extends Phaser.Scene {
 
     // Transition overlay (black rect, fades in/out)
     this._fadeRect = this.add.graphics().setDepth(900);
-    this._fadeRect.fillStyle(0x000000, 1);
-    this._fadeRect.fillRect(0, 0, width, height);
-    this._fadeRect.setAlpha(0);
+
+    // Draw everything sized to the current viewport (and re-draw on resize)
+    this._applyLayout(this.scale.width, this.scale.height);
+
+    // Listen for viewport resize / orientation changes (important for mobile)
+    this.scale.on('resize', this._onResize, this);
 
     this._loadLevel(this.startLevel, this.startLives);
     this._initSounds();
@@ -127,6 +126,39 @@ export default class GameScene extends Phaser.Scene {
     }
     // Get the global music manager instead of creating a new one
     this._music = this.registry.get('musicManager');
+  }
+
+  // ── Layout helpers ────────────────────────────────────────────────────────────
+  // Called once at create() and again whenever the viewport resizes (mobile
+  // orientation changes, browser chrome showing/hiding, etc.).
+  _applyLayout(width, height) {
+    const TOP_BAR = 64;
+    const playX = this._panelW;
+    const playY = TOP_BAR;
+    const playW = width  - this._panelW * 2;
+    const playH = height - TOP_BAR;
+
+    // Redraw the mask region to match the new viewport
+    this._maskShape.clear();
+    this._maskShape.fillStyle(0xffffff);
+    this._maskShape.fillRect(playX, playY, playW, playH);
+
+    // Resize the fade-overlay so it covers the whole screen.
+    // Graphics.clear() only wipes the drawing buffer; it does NOT change
+    // the object's alpha, so any in-progress fade tween is unaffected.
+    this._fadeRect.clear();
+    this._fadeRect.fillStyle(0x000000, 1);
+    this._fadeRect.fillRect(0, 0, width, height);
+
+    // Update renderer dimensions if it already exists (e.g. after orientation change).
+    // _applyLayout is also called before _loadLevel in create(), so the guard is needed.
+    if (this.renderer) {
+      this.renderer.resize(width, height);
+    }
+  }
+
+  _onResize(gameSize) {
+    this._applyLayout(gameSize.width, gameSize.height);
   }
 
   _beep(freq, type, duration, volume = 0.3, delay = 0) {
@@ -691,5 +723,6 @@ export default class GameScene extends Phaser.Scene {
     if (this._mobileTapHandler) {
       window.removeEventListener('mobile-tap', this._mobileTapHandler);
     }
+    this.scale.off('resize', this._onResize, this);
   }
 }

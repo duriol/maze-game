@@ -90,6 +90,15 @@ export default class IsometricRenderer {
     }
   }
 
+  resize(newWidth, newHeight) {
+    this.sceneWidth  = newWidth;
+    this.sceneHeight = newHeight;
+    this.playW = newWidth  - this.PANEL_W * 2;
+    this.playH = newHeight - this.TOP_BAR;
+    this.offsetX = this.PANEL_W + Math.floor(this.playW / 2);
+    this.offsetY = this.TOP_BAR + Math.floor(this.playH / 2);
+  }
+
   triggerSwordFlash(dx, dy) { this.swordFlash = 220; this.swordFlashDir = { dx, dy }; }
 
   // ── Draw equipped items around player ─────────────────────────────────────────
