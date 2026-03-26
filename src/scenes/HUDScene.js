@@ -15,6 +15,7 @@ export default class HUDScene extends Phaser.Scene {
 
   create() {
     const { width, height } = this.scale;
+    const isMobile = window.matchMedia('(pointer: coarse)').matches;
 
     const gfx = this.add.graphics().setDepth(1000);
 
@@ -22,17 +23,19 @@ export default class HUDScene extends Phaser.Scene {
     gfx.fillStyle(0x000000, 0.75);
     gfx.fillRect(0, 0, width, TOP_BAR_H);
 
-    // ── Left panel — Instructions ─────────────────────────────────────────────
-    gfx.fillStyle(PANEL_BG, PANEL_ALPHA);
-    gfx.fillRoundedRect(8, TOP_BAR_H + 8, PANEL_W, height - TOP_BAR_H - 16, 8);
-    gfx.lineStyle(1, 0x3a3a5c, 0.8);
-    gfx.strokeRoundedRect(8, TOP_BAR_H + 8, PANEL_W, height - TOP_BAR_H - 16, 8);
+    if (!isMobile) {
+      // ── Left panel — Instructions ───────────────────────────────────────────
+      gfx.fillStyle(PANEL_BG, PANEL_ALPHA);
+      gfx.fillRoundedRect(8, TOP_BAR_H + 8, PANEL_W, height - TOP_BAR_H - 16, 8);
+      gfx.lineStyle(1, 0x3a3a5c, 0.8);
+      gfx.strokeRoundedRect(8, TOP_BAR_H + 8, PANEL_W, height - TOP_BAR_H - 16, 8);
 
-    // ── Right panel — Legend ──────────────────────────────────────────────────
-    gfx.fillStyle(PANEL_BG, PANEL_ALPHA);
-    gfx.fillRoundedRect(width - PANEL_W - 8, TOP_BAR_H + 8, PANEL_W, height - TOP_BAR_H - 16, 8);
-    gfx.lineStyle(1, 0x3a3a5c, 0.8);
-    gfx.strokeRoundedRect(width - PANEL_W - 8, TOP_BAR_H + 8, PANEL_W, height - TOP_BAR_H - 16, 8);
+      // ── Right panel — Legend ────────────────────────────────────────────────
+      gfx.fillStyle(PANEL_BG, PANEL_ALPHA);
+      gfx.fillRoundedRect(width - PANEL_W - 8, TOP_BAR_H + 8, PANEL_W, height - TOP_BAR_H - 16, 8);
+      gfx.lineStyle(1, 0x3a3a5c, 0.8);
+      gfx.strokeRoundedRect(width - PANEL_W - 8, TOP_BAR_H + 8, PANEL_W, height - TOP_BAR_H - 16, 8);
+    }
 
     // ── Top bar content ───────────────────────────────────────────────────────
     this.livesText = this.add.text(20, 14, '', {
@@ -43,7 +46,9 @@ export default class HUDScene extends Phaser.Scene {
       fontSize: '20px', fontFamily: 'monospace', fill: '#ffd54f'
     }).setOrigin(0.5, 0).setDepth(1001);
 
-    this.inventoryText = this.add.text(width - 20, 14, '', {
+    // Leave room for the HTML info button on mobile (38px wide at right: 12px)
+    const invX = isMobile ? width - 58 : width - 20;
+    this.inventoryText = this.add.text(invX, 14, '', {
       fontSize: '18px', fontFamily: 'monospace', fill: '#80cbc4'
     }).setOrigin(1, 0).setDepth(1001);
 
@@ -60,11 +65,13 @@ export default class HUDScene extends Phaser.Scene {
     }).setOrigin(0.5, 0).setDepth(1002).setAlpha(0);
     this.hintTimer = 0;
 
-    // ── Left panel text ───────────────────────────────────────────────────────
-    this._buildInstructionsPanel(8, TOP_BAR_H + 8, PANEL_W, height);
+    if (!isMobile) {
+      // ── Left panel text ─────────────────────────────────────────────────────
+      this._buildInstructionsPanel(8, TOP_BAR_H + 8, PANEL_W, height);
 
-    // ── Right panel text ──────────────────────────────────────────────────────
-    this._buildLegendPanel(width - PANEL_W - 8, TOP_BAR_H + 8, PANEL_W, height);
+      // ── Right panel text ────────────────────────────────────────────────────
+      this._buildLegendPanel(width - PANEL_W - 8, TOP_BAR_H + 8, PANEL_W, height);
+    }
 
     // ── Events ────────────────────────────────────────────────────────────────
     this.game.events.on('hud-update', this._onUpdate, this);

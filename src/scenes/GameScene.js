@@ -31,9 +31,14 @@ export default class GameScene extends Phaser.Scene {
 
   create() {
     const { width, height } = this.scale;
-    const PANEL_W = 188, TOP_BAR = 64;
+    const isMobile = window.matchMedia('(pointer: coarse)').matches;
+    const PANEL_W = isMobile ? 0 : 188, TOP_BAR = 64;
     const playX = PANEL_W, playY = TOP_BAR;
     const playW = width - PANEL_W * 2, playH = height - TOP_BAR;
+    this._panelW = PANEL_W;
+
+    // Show virtual controls on mobile
+    document.body.classList.add('game-active');
 
     // Graphics objects for the map — clipped to play area
     this._tileGfx   = this.add.graphics();
@@ -92,6 +97,27 @@ export default class GameScene extends Phaser.Scene {
         }
       }
     });
+
+    // Unlock Web Audio on first touch/pointer (mobile) and start music
+    const unlockAudioOnce = () => {
+      if (this._audioCtx && this._audioCtx.state === 'suspended') {
+        this._audioCtx.resume();
+      }
+      if (this._music) {
+        if (!this._music.ctx) this._music.unlock();
+        this._music.stop();
+        if (this._music.ctx && this._music.ctx.state === 'suspended') {
+          this._music.ctx.resume().then(() => {
+            if (this._music) this._music.play(this.levelId);
+          });
+        } else {
+          this._music.play(this.levelId);
+        }
+      }
+    };
+    this.input.once('pointerdown', unlockAudioOnce);
+    this._mobileTapHandler = unlockAudioOnce;
+    window.addEventListener('mobile-tap', this._mobileTapHandler, { once: true });
 
     // Fade in on start
     this.tweens.add({ targets: this._fadeRect, alpha: 0, duration: 400, ease: 'Linear' });
@@ -202,7 +228,7 @@ export default class GameScene extends Phaser.Scene {
     const scaledEnemies = this.mapData.enemies.map(e => ({ ...e, speed: e.speed * diff.enemyMult }));
 
     this.fog      = new FogOfWarManager(this._fogGfx, this.mapData.width, this.mapData.height, diff.visionR);
-    this.renderer = new IsometricRenderer(this._tileGfx, this._entityGfx, this.mapData, this.scale.width, this.scale.height);
+    this.renderer = new IsometricRenderer(this._tileGfx, this._entityGfx, this.mapData, this.scale.width, this.scale.height, this._panelW);
 
     this.trapManager   = new TrapManager(scaledTraps);
     this.enemyManager  = new EnemyManager(scaledEnemies);
@@ -255,7 +281,10 @@ export default class GameScene extends Phaser.Scene {
     }
 
     // Sword use
-    if (Phaser.Input.Keyboard.JustDown(this.wasd.sword)) {
+    const mc = window.mobileCtrl || {};
+    const swordPressed = Phaser.Input.Keyboard.JustDown(this.wasd.sword) || mc.sword;
+    if (mc.sword) mc.sword = false;
+    if (swordPressed) {
       if (this.player.swordUses > 0) {
         const trap = this.trapManager.getAdjacentTrap(this.player.gridX, this.player.gridY);
         // Determine slash direction from last movement
@@ -325,10 +354,14 @@ export default class GameScene extends Phaser.Scene {
   _getInputDirection() {
     const { up, down, left, right } = this.cursors;
     const w = this.wasd;
-    if (Phaser.Input.Keyboard.JustDown(up)    || Phaser.Input.Keyboard.JustDown(w.up))    return 'UP';
-    if (Phaser.Input.Keyboard.JustDown(down)  || Phaser.Input.Keyboard.JustDown(w.down))  return 'DOWN';
-    if (Phaser.Input.Keyboard.JustDown(left)  || Phaser.Input.Keyboard.JustDown(w.left))  return 'LEFT';
-    if (Phaser.Input.Keyboard.JustDown(right) || Phaser.Input.Keyboard.JustDown(w.right)) return 'RIGHT';
+    const mc = window.mobileCtrl || {};
+
+    if (Phaser.Input.Keyboard.JustDown(up)    || Phaser.Input.Keyboard.JustDown(w.up)    || mc.up)    { mc.up    = false; return 'UP'; }
+    if (Phaser.Input.Keyboard.JustDown(down)  || Phaser.Input.Keyboard.JustDown(w.down)  || mc.down)  { mc.down  = false; return 'DOWN'; }
+    if (Phaser.Input.Keyboard.JustDown(left)  || Phaser.Input.Keyboard.JustDown(w.left)  || mc.left)  { mc.left  = false; return 'LEFT'; }
+    if (Phaser.Input.Keyboard.JustDown(right) || Phaser.Input.Keyboard.JustDown(w.right) || mc.right) {
+      mc.right = false; return 'RIGHT';
+    }
     return null;
   }
 
@@ -579,5 +612,9 @@ export default class GameScene extends Phaser.Scene {
 
   shutdown() {
     if (this._music) this._music.stop();
+    document.body.classList.remove('game-active');
+    if (this._mobileTapHandler) {
+      window.removeEventListener('mobile-tap', this._mobileTapHandler);
+    }
   }
 }
