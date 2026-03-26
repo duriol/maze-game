@@ -42,9 +42,11 @@ export default class GameScene extends Phaser.Scene {
     document.body.classList.add('game-active');
 
     // Graphics objects for the map — clipped to play area
-    this._tileGfx   = this.add.graphics();
-    this._entityGfx = this.add.graphics().setDepth(100);
-    this._fogGfx    = this.add.graphics().setDepth(500);
+    this._tileGfx      = this.add.graphics();           // Floor tiles
+    this._wallBackGfx  = this.add.graphics().setDepth(50); // Walls behind player
+    this._entityGfx    = this.add.graphics().setDepth(100); // Entities (players, enemies, items)
+    this._wallFrontGfx = this.add.graphics().setDepth(150); // Walls in front of player
+    this._fogGfx       = this.add.graphics().setDepth(500); // Fog (top)
 
     // Apply a rectangular mask so map never bleeds into side panels or top bar
     const maskShape = this.make.graphics({ add: false });
@@ -52,7 +54,9 @@ export default class GameScene extends Phaser.Scene {
     maskShape.fillRect(playX, playY, playW, playH);
     const mask = maskShape.createGeometryMask();
     this._tileGfx.setMask(mask);
+    this._wallBackGfx.setMask(mask);
     this._entityGfx.setMask(mask);
+    this._wallFrontGfx.setMask(mask);
     this._fogGfx.setMask(mask);
 
     // Transition overlay (black rect, fades in/out)
@@ -72,7 +76,8 @@ export default class GameScene extends Phaser.Scene {
       left:  Phaser.Input.Keyboard.KeyCodes.A,
       right: Phaser.Input.Keyboard.KeyCodes.D,
       sword: Phaser.Input.Keyboard.KeyCodes.E,
-      full:  Phaser.Input.Keyboard.KeyCodes.F
+      full:  Phaser.Input.Keyboard.KeyCodes.F,
+      sprint: Phaser.Input.Keyboard.KeyCodes.SHIFT
     });
 
     this.input.keyboard.on('keydown-F', () => {
@@ -205,20 +210,21 @@ export default class GameScene extends Phaser.Scene {
   }
 
   _loadLevel(levelId, lives) {
-    if (this._tileGfx)   this._tileGfx.clear();
-    if (this._entityGfx) this._entityGfx.clear();
-    if (this._fogGfx)    this._fogGfx.clear();
-
+    if (this._tileGfx)      this._tileGfx.clear();
+    if (this._wallBackGfx)  this._wallBackGfx.clear();
+    if (this._wallFrontGfx) this._wallFrontGfx.clear();
+    if (this._entityGfx)    this._entityGfx.clear();
+    if (this._fogGfx)       this._fogGfx.clear();
     this.mapData = LEVELS[levelId];
     this.levelId = levelId;
     this.tiles   = this.mapData.tiles.map(row => [...row]);
 
-    // Difficulty scaling per level
-    const diff = { 1: { visionR: 4, trapMult: 1.0, enemyMult: 1.0 },
-                   2: { visionR: 3, trapMult: 1.5, enemyMult: 1.4 },
-                   3: { visionR: 3, trapMult: 2.2, enemyMult: 2.0 },
-                   4: { visionR: 3, trapMult: 2.5, enemyMult: 2.2 },
-                   5: { visionR: 2, trapMult: 3.0, enemyMult: 2.5 } }[levelId] || { visionR: 3, trapMult: 1, enemyMult: 1 };
+    // Difficulty scaling per level (reduced vision radius for challenge)
+    const diff = { 1: { visionR: 3.0, trapMult: 1.0, enemyMult: 1.0 },
+                   2: { visionR: 2.5, trapMult: 1.5, enemyMult: 1.4 },
+                   3: { visionR: 2.5, trapMult: 2.2, enemyMult: 2.0 },
+                   4: { visionR: 2.0, trapMult: 2.5, enemyMult: 2.2 },
+                   5: { visionR: 1.8, trapMult: 3.0, enemyMult: 2.5 } }[levelId] || { visionR: 2.5, trapMult: 1, enemyMult: 1 };
 
     this.player = new Player(this.mapData.entrance.x, this.mapData.entrance.y);
     this.player.lives = lives;
@@ -229,7 +235,7 @@ export default class GameScene extends Phaser.Scene {
     const scaledEnemies = this.mapData.enemies.map(e => ({ ...e, speed: e.speed * diff.enemyMult }));
 
     this.fog      = new FogOfWarManager(this._fogGfx, this.mapData.width, this.mapData.height, diff.visionR);
-    this.renderer = new IsometricRenderer(this._tileGfx, this._entityGfx, this.mapData, this.scale.width, this.scale.height, this._panelW);
+    this.renderer = new IsometricRenderer(this._tileGfx, this._wallBackGfx, this._wallFrontGfx, this._entityGfx, this.mapData, this.scale.width, this.scale.height, this._panelW);
 
     this.trapManager   = new TrapManager(scaledTraps);
     this.enemyManager  = new EnemyManager(scaledEnemies);
@@ -296,28 +302,43 @@ export default class GameScene extends Phaser.Scene {
     if (this._transitioning) return;
     this.damageThisFrame = false;
 
-    // --- Player input ---
+    // --- Player input (continuous movement) ---
     const dir = this._getInputDirection();
-    if (dir) {
-      const moved = this.player.tryMove(dir, (nx, ny) => this._isWalkable(nx, ny));
-      if (moved) {
-        // Track last direction for sword slash
-        const dirMap = { UP: [0,-1], DOWN: [0,1], LEFT: [-1,0], RIGHT: [1,0] };
-        [this._lastDirDx, this._lastDirDy] = dirMap[dir];
-        this._playSound('step');
-        this.fog.recalculate(this.player.gridX, this.player.gridY);
-        this._onPlayerMoved();
-      }
+    this.player.setMovement(dir, (nx, ny) => this._isWalkable(nx, ny));
+    
+    // Update player movement
+    const moveResult = this.player.update(delta, (nx, ny) => this._isWalkable(nx, ny));
+    
+    // If player entered a new cell, trigger events
+    if (moveResult.enteredNewCell) {
+      this._onPlayerMoved();
+      this.fog.recalculate(this.player.gridX, this.player.gridY);
+    }
+    
+    // Update facing for sword slash
+    const dirMap = { UP: [0,-1], DOWN: [0,1], LEFT: [-1,0], RIGHT: [1,0] };
+    if (this.player.facing && dirMap[this.player.facing]) {
+      [this._lastDirDx, this._lastDirDy] = dirMap[this.player.facing];
     }
 
     // Sword use
-    const mc = window.mobileCtrl || {};
+    const mc= window.mobileCtrl || {};
     const swordPressed = Phaser.Input.Keyboard.JustDown(this.wasd.sword) || mc.sword;
     if (mc.sword) mc.sword = false;
+    
+    // Sprint activation (Shift key or mobile sprint button)
+    const sprintPressed = Phaser.Input.Keyboard.JustDown(this.wasd.sprint) || mc.sprint;
+    if (mc.sprint) mc.sprint = false;
+    if (sprintPressed) {
+      if (this.player.activateSprint()) {
+        this._playSound('sprint_start');
+      }
+    }
+    
     if (swordPressed) {
       if (this.player.swordUses > 0) {
         const trap = this.trapManager.getAdjacentTrap(this.player.gridX, this.player.gridY);
-        // Determine slash direction from last movement
+        // Determine slash direction from facing
         const dx = this._lastDirDx || 1;
         const dy = this._lastDirDy || 0;
         this.renderer.triggerSwordFlash(dx, dy);
@@ -338,22 +359,20 @@ export default class GameScene extends Phaser.Scene {
       }
     }
 
-    this.player.update(delta);
-
     // --- Update systems ---
     this.fog.update(delta);
     this.trapManager.update(delta);
-    this.enemyManager.update(delta);
+    this.enemyManager.update(delta, this.player.visualX, this.player.visualY, (nx, ny) => this._isWalkable(nx, ny));
     this.mineManager.update(delta);
 
-    // --- Collision checks ---
+    // --- Collision checks (use floating-point positions for smooth continuous movement) ---
     if (!this.damageThisFrame) {
-      if (this.trapManager.checkCollision(this.player.gridX, this.player.gridY)) {
+      if (this.trapManager.checkCollision(this.player.visualX, this.player.visualY)) {
         this._damagePlayer();
       }
     }
     if (!this.damageThisFrame) {
-      if (this.enemyManager.checkCollision(this.player.gridX, this.player.gridY)) {
+      if (this.enemyManager.checkCollision(this.player.visualX, this.player.visualY)) {
         this._damagePlayer();
       }
     }
@@ -368,7 +387,7 @@ export default class GameScene extends Phaser.Scene {
 
     // --- Render ---
     this.renderer.followPlayer(this.player.visualX, this.player.visualY);
-    this.renderer.drawMap(this.fog, this.tiles, delta);
+    this.renderer.drawMap(this.fog, this.tiles, this.player.visualX, this.player.visualY, delta);
     this.renderer.clearEntities();
     this._renderEntities();
     if (this.renderer.swordFlash > 0) {
@@ -387,24 +406,29 @@ export default class GameScene extends Phaser.Scene {
     const w = this.wasd;
     const mc = window.mobileCtrl || {};
 
-    if (Phaser.Input.Keyboard.JustDown(up)    || Phaser.Input.Keyboard.JustDown(w.up)    || mc.up)    { mc.up    = false; return 'UP'; }
-    if (Phaser.Input.Keyboard.JustDown(down)  || Phaser.Input.Keyboard.JustDown(w.down)  || mc.down)  { mc.down  = false; return 'DOWN'; }
-    if (Phaser.Input.Keyboard.JustDown(left)  || Phaser.Input.Keyboard.JustDown(w.left)  || mc.left)  { mc.left  = false; return 'LEFT'; }
-    if (Phaser.Input.Keyboard.JustDown(right) || Phaser.Input.Keyboard.JustDown(w.right) || mc.right) {
-      mc.right = false; return 'RIGHT';
-    }
-    return null;
+    // Return direction if key/button is held down (not just pressed)
+    if (up.isDown || w.up.isDown || mc.up) return 'UP';
+    if (down.isDown || w.down.isDown || mc.down) return 'DOWN';
+    if (left.isDown || w.left.isDown || mc.left) return 'LEFT';
+    if (right.isDown || w.right.isDown || mc.right) return 'RIGHT';
+    
+    return null; // No movement
   }
 
   _isWalkable(nx, ny) {
-    if (nx < 0 || ny < 0 || nx >= this.mapData.width || ny >= this.mapData.height) return false;
-    const tile = this.tiles[ny][nx];
+    // Validate inputs are valid numbers
+    if (typeof nx !== 'number' || typeof ny !== 'number' || isNaN(nx) || isNaN(ny)) return false;
+    // Round to nearest tile since enemies use floating point positions
+    const tileX = Math.round(nx);
+    const tileY = Math.round(ny);
+    if (tileX < 0 || tileY < 0 || tileX >= this.mapData.width || tileY >= this.mapData.height) return false;
+    const tile = this.tiles[tileY][tileX];
     if (tile === T.WALL) return false;
     if (tile === T.DOOR_CLOSED) {
       // Auto-use key if player has one
       if (this.player.hasKey()) {
         this.player.useKey();
-        this.tiles[ny][nx] = T.DOOR_OPEN;
+        this.tiles[tileY][tileX] = T.DOOR_OPEN;
         this._playSound('door_open');
         return true;
       }
@@ -430,7 +454,7 @@ export default class GameScene extends Phaser.Scene {
     const mine = this.mineManager.tryActivate(px, py);
     if (mine) {
       this._playSound('mine_activate');
-      this.game.events.emit('hud-hint', '💣 ¡Mina activada! ¡Aléjate en 3 segundos!');
+      this.game.events.emit('hud-hint', '💣 ¡Mina activada! ¡Aléjate en 2 segundos!');
     }
 
     // Switch activation
@@ -547,7 +571,7 @@ export default class GameScene extends Phaser.Scene {
 
   _renderEntities() {
     // Use visual (interpolated) position for smooth movement
-    this.renderer.drawEntity(this.player.visualX, this.player.visualY, 'PLAYER');
+    this.renderer.drawEntity(this.player.visualX, this.player.visualY, 'PLAYER', this.player.facing);
     
     // Draw equipped items and active inventory around player
     this.renderer.drawPlayerEquipment(
@@ -572,7 +596,7 @@ export default class GameScene extends Phaser.Scene {
       const gx = Math.round(enemy.posX);
       const gy = Math.round(enemy.posY);
       if (this.fog.isVisible(gx, gy)) {
-        this.renderer.drawEntity(enemy.posX, enemy.posY, 'ENEMY', this.levelId, enemy.id);
+        this.renderer.drawEntity(enemy.posX, enemy.posY, 'ENEMY', enemy.type, enemy.id);
       }
     }
 
