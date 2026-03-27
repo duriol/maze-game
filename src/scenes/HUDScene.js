@@ -153,18 +153,10 @@ export default class HUDScene extends Phaser.Scene {
     }).setOrigin(0.5, 0).setDepth(1001);
 
     const entries = [
-      ['👻', '#ede7f6', 'Kiro (tú)'],
-      ['🟧', '#e8651a', 'Lambda (nv.1)'],
-      ['🟧', '#e8651a', 'API Gateway (nv.1)'],
-      ['🟩', '#3f8624', 'S3 (nv.1)'],
-      ['🟦', '#1a6faf', 'DynamoDB (nv.1)'],
-      ['🟧', '#e8651a', 'Kinesis (nv.1)'],
-      ['🟥', '#dd344c', 'IAM (nv.1)'],
-      ['🟪', '#e7157b', 'CloudWatch (nv.1)'],
-      ['🟪', '#e7157b', 'SNS (nv.1)'],
-      ['🦇', '#9c27b0', 'Murciélago (nv.2)'],
-      ['🔵', '#1e88e5', 'Kiro logo (nv.2)'],
-      ['🕷', '#1b5e20', 'Araña (nv.2)'],
+      ['👻', '#f8f8ff', 'Kiro (tú) ♡'],
+      ['💀', '#e0e0e0', 'Esqueleto'],
+      ['🐂', '#8d6e63', 'Minotauro'],
+      ['👁', '#9c27b0', 'Espectro'],
       ['🟢', '#2e7d32', 'Entrada'],
       ['🔴', '#b71c1c', 'Salida'],
       ['🟪', '#4a148c', 'Puerta cerrada'],

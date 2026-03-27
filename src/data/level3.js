@@ -1,95 +1,125 @@
-// Level 3 — 25x25 — Hard
+// Level 3 - Multiple Skeletons + Minotaur + Specter - Hard challenge
 export default {
   id: 3,
-  width: 25,
-  height: 25,
+  width: 22,
+  height: 22,
   tiles: [
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,2,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-    [1,1,1,0,1,0,1,1,0,1,0,1,1,0,1,0,1,1,0,1,0,1,1,0,1],
-    [1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1],
-    [1,0,1,1,1,0,1,0,1,1,1,1,0,1,1,0,1,1,0,1,1,1,1,0,1],
-    [1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,0,1],
-    [1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1],
-    [1,1,1,0,1,0,1,1,1,1,1,0,1,0,1,0,1,1,1,0,1,0,1,0,1],
-    [1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,1],
-    [1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1],
-    [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-    [1,1,1,0,1,1,1,0,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1],
-    [1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,1],
-    [1,0,1,0,1,1,1,0,1,1,1,1,1,0,1,0,1,1,1,0,1,0,1,0,1],
-    [1,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1],
-    [1,1,1,0,1,0,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,0,1,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1],
-    [1,0,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-    [1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,1],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,2,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,1],
+    [1,1,1,0,1,0,1,1,0,1,0,1,1,0,1,0,1,1,0,1,0,1],
+    [1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+    [1,0,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1,0,1,1,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,0,1],
+    [1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1],
+    [1,0,1,0,1,1,1,1,1,0,1,1,1,0,1,0,1,1,1,1,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1],
+    [1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1],
+    [1,0,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,0,1,1,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,0,1],
+    [1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1],
+    [1,0,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,0,1,1,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,4,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3,1],
   ],
   entrance: { x: 1, y: 1 },
-  exit: { x: 23, y: 24 },
+  exit: { x: 20, y: 21 },
 
   traps: [
-    { id: 't1', type: 'PENDULUM',    path: [{x:5,y:5},{x:5,y:11}],   speed: 1.8 },
-    { id: 't2', type: 'PROJECTILE',  path: [{x:9,y:7},{x:19,y:7}],   speed: 4.0 },
-    { id: 't3', type: 'MOVING_WALL', path: [{x:3,y:15},{x:9,y:15}],  speed: 1.5 },
-    { id: 't4', type: 'SPIKE',       path: [{x:13,y:11},{x:13,y:15}], speed: 1.2 },
-    { id: 't5', type: 'PENDULUM',    path: [{x:17,y:13},{x:21,y:13}], speed: 2.0 },
-    { id: 't6', type: 'PROJECTILE',  path: [{x:7,y:19},{x:19,y:19}],  speed: 3.5 }
+    { id: 't1', type: 'PENDULUM',    path: [{x:7,y:7},{x:7,y:11}],    speed: 1.3 },
+    { id: 't2', type: 'PROJECTILE',  path: [{x:5,y:13},{x:15,y:13}],  speed: 2.5 },
+    { id: 't3', type: 'MOVING_WALL', path: [{x:11,y:5},{x:11,y:9}],   speed: 1.0 },
+    { id: 't4', type: 'SPIKE',       path: [{x:17,y:7},{x:17,y:11}],  speed: 0.9 },
+    { id: 't5', type: 'PENDULUM',    path: [{x:15,y:17},{x:19,y:17}], speed: 1.4 }
   ],
 
   mines: [
-    { id: 'm1', gridX: 3,  gridY: 9,  radius: 1 },
-    { id: 'm2', gridX: 21, gridY: 7,  radius: 1 },
-    { id: 'm3', gridX: 11, gridY: 13, radius: 1 },
-    { id: 'm4', gridX: 21, gridY: 17, radius: 1 }
+    { id: 'm1', gridX: 5,  gridY: 9,  radius: 1 },
+    { id: 'm2', gridX: 15, gridY: 5,  radius: 1 },
+    { id: 'm3', gridX: 11, gridY: 17, radius: 1 }
   ],
 
+  // 4 Skeletons + 2 Minotaurs + 1 Specter (BALANCED: -30% speed, -25% ranges)
   enemies: [
-    { id: 'e1', patrolPath: [{x:3,y:7},{x:3,y:13},{x:9,y:13},{x:9,y:7}],   speed: 1.2 },
-    { id: 'e2', patrolPath: [{x:13,y:5},{x:21,y:5},{x:21,y:11},{x:13,y:11}], speed: 1.4 },
-    { id: 'e3', patrolPath: [{x:11,y:17},{x:19,y:17},{x:19,y:21},{x:11,y:21}], speed: 1.6 }
-  ],
-
-  items: [
-    { id: 'i1', type: 'HEALTH_POTION', gridX: 9,  gridY: 3  },
-    { id: 'i2', type: 'TORCH',         gridX: 19, gridY: 9  },
-    { id: 'i3', type: 'KEY',           gridX: 7,  gridY: 19 },
-    { id: 'i4', type: 'SWORD',         gridX: 15, gridY: 7  },
-    { id: 'i5', type: 'SHIELD',        gridX: 11, gridY: 15 }
-  ],
-
-  puzzles: [
     {
-      id: 'p1',
-      switches: [
-        { id: 's1', gridX: 5,  gridY: 3,  activationOrder: 0 },
-        { id: 's2', gridX: 13, gridY: 9,  activationOrder: 1 },
-        { id: 's3', gridX: 19, gridY: 15, activationOrder: 2 }
-      ],
-      correctSequence: ['s1', 's2', 's3'],
-      doorId: { x: 23, y: 23 }
+      id: 'skeleton1',
+      type: 'SKELETON',
+      startX: 5,
+      startY: 5,
+      patrolPath: [{x:5,y:5},{x:9,y:5},{x:9,y:9},{x:5,y:9}],
+      speed: 0.75,
+      visionRange: 3
     },
     {
-      id: 'p2',
-      switches: [
-        { id: 's4', gridX: 7,  gridY: 13, activationOrder: 0 },
-        { id: 's5', gridX: 17, gridY: 19, activationOrder: 1 }
-      ],
-      correctSequence: ['s4', 's5'],
-      doorId: { x: 21, y: 21 }
+      id: 'skeleton2',
+      type: 'SKELETON',
+      startX: 15,
+      startY: 5,
+      patrolPath: [{x:15,y:5},{x:19,y:5},{x:19,y:9},{x:15,y:9}],
+      speed: 0.85,
+      visionRange: 4
+    },
+    {
+      id: 'skeleton3',
+      type: 'SKELETON',
+      startX: 5,
+      startY: 15,
+      patrolPath: [{x:5,y:15},{x:9,y:15},{x:9,y:19},{x:5,y:19}],
+      speed: 0.7,
+      visionRange: 3
+    },
+    {
+      id: 'skeleton4',
+      type: 'SKELETON',
+      startX: 17,
+      startY: 17,
+      patrolPath: [{x:17,y:17},{x:19,y:17},{x:19,y:19},{x:17,y:19}],
+      speed: 0.9,
+      visionRange: 2
+    },
+    {
+      id: 'minotaur1',
+      type: 'MINOTAUR',
+      startX: 11,
+      startY: 7,
+      patrolPath: [{x:11,y:7},{x:13,y:7},{x:13,y:9},{x:11,y:9}],
+      speed: 0.55,
+      huntRange: 5
+    },
+    {
+      id: 'minotaur2',
+      type: 'MINOTAUR',
+      startX: 11,
+      startY: 15,
+      patrolPath: [{x:11,y:15},{x:13,y:15},{x:13,y:17},{x:11,y:17}],
+      speed: 0.6,
+      huntRange: 5
+    },
+    {
+      id: 'specter1',
+      type: 'SPECTER',
+      startX: 11,
+      startY: 11,
+      patrolPath: [{x:11,y:11},{x:13,y:11}],
+      teleportPath: [{x:5,y:5},{x:15,y:5},{x:5,y:15},{x:15,y:15},{x:11,y:11}],
+      speed: 0.45
     }
   ],
 
-  wallHints: [
-    { x: 4,  y: 3,  text: 'Tres sellos cierran el paso final. El primero está aquí al noroeste. Memorizarás el orden.' },
-    { x: 12, y: 9,  text: 'Segundo sello encontrado. El tercero está al sureste. Actívalos: noroeste → centro → sureste.' },
-    { x: 18, y: 15, text: 'Tercer y último sello principal. Hay además dos puertas secundarias con sus propias palancas.' },
-    { x: 6,  y: 13, text: 'Primera palanca de acceso secundario. Su par está al sureste, en el pasillo inferior.' },
-    { x: 16, y: 19, text: 'Hay minas ocultas en los pasillos. El suelo marcado con negro es peligroso. Huye rápido si las pisas.' }
-  ]
+  items: [
+    { id: 'i1', type: 'HEALTH_POTION', gridX: 11, gridY: 3  },
+    { id: 'i2', type: 'TORCH',         gridX: 19, gridY: 11 },
+    { id: 'i3', type: 'KEY',           gridX: 7,  gridY: 19 },
+    { id: 'i4', type: 'SWORD',         gridX: 3,  gridY: 11 },
+    { id: 'i5', type: 'SHIELD',        gridX: 13, gridY: 13 },
+    { id: 'i6', type: 'HEALTH_POTION', gridX: 17, gridY: 3  }
+  ],
+
+  puzzles: [],
+  wallHints: []
 };
