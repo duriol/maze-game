@@ -121,16 +121,20 @@ export default class EnemyManager {
   }
 
   /**
-   * Simple patrol along predefined path - CONTINUOUS MOVEMENT
+   * Simple patrol along predefined path
    */
   _updatePatrol(enemy, dt, isWalkable) {
     if (!enemy.patrolPath || enemy.patrolPath.length === 0) return;
 
+    const moveInterval = 1 / enemy.currentSpeed;
+    if (enemy.moveTimer < moveInterval) return;
+    enemy.moveTimer = 0;
+
     // Get next patrol point
     const target = enemy.patrolPath[enemy.patrolIndex];
     
-    // Move continuously towards target
-    const reached = this._moveTowardsPoint(enemy, target.x, target.y, dt, isWalkable);
+    // Move towards target
+    const reached = this._stepTowards(enemy, target.x, target.y, isWalkable);
     
     if (reached) {
       // Reached waypoint, move to next
@@ -146,69 +150,18 @@ export default class EnemyManager {
   }
 
   /**
-   * Move enemy continuously towards target position - CONTINUOUS MOVEMENT
+   * Move enemy towards target position (for chasing/hunting)
    */
   _moveTowards(enemy, targetX, targetY, dt, isWalkable) {
-    this._moveTowardsPoint(enemy, targetX, targetY, dt, isWalkable);
+    const moveInterval = 1 / enemy.currentSpeed;
+    if (enemy.moveTimer < moveInterval) return;
+    enemy.moveTimer = 0;
+
+    this._stepTowards(enemy, targetX, targetY, isWalkable);
   }
 
   /**
-   * Continuous smooth movement towards a point using velocity and delta time
-   * Returns true if reached target (within 0.2 tiles)
-   */
-  _moveTowardsPoint(enemy, targetX, targetY, dt, isWalkable) {
-    const dx = targetX - enemy.posX;
-    const dy = targetY - enemy.posY;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-
-    // Check if reached target
-    if (dist < 0.2) return true;
-
-    // Calculate movement step based on speed and delta time
-    const moveAmount = enemy.currentSpeed * dt;
-    
-    if (moveAmount >= dist) {
-      // Would overshoot, just snap to target
-      if (isWalkable(Math.round(targetX), Math.round(targetY))) {
-        enemy.posX = targetX;
-        enemy.posY = targetY;
-        return true;
-      }
-      return false;
-    }
-
-    // Normalize direction and apply movement
-    const dirX = dx / dist;
-    const dirY = dy / dist;
-    const newX = enemy.posX + dirX * moveAmount;
-    const newY = enemy.posY + dirY * moveAmount;
-
-    // Validate new position is walkable
-    const targetTileX = Math.round(newX);
-    const targetTileY = Math.round(newY);
-    
-    if (isWalkable(targetTileX, targetTileY)) {
-      enemy.posX = newX;
-      enemy.posY = newY;
-    } else {
-      // Hit wall, try sliding along one axis
-      const tryX = enemy.posX + dirX * moveAmount;
-      const tryY = enemy.posY + dirY * moveAmount;
-      
-      if (isWalkable(Math.round(tryX), Math.round(enemy.posY))) {
-        enemy.posX = tryX;
-      } else if (isWalkable(Math.round(enemy.posX), Math.round(tryY))) {
-        enemy.posY = tryY;
-      }
-      // If both blocked, stay in place
-    }
-
-    return false;
-  }
-
-  /**
-   * DEPRECATED - Old discrete tile-based movement
-   * Kept for reference but no longer used
+   * Take one step towards target. Returns true if already at target.
    */
   _stepTowards(enemy, targetX, targetY, isWalkable) {
     const dx = targetX - enemy.posX;
@@ -271,15 +224,12 @@ export default class EnemyManager {
   }
 
   /**
-   * Check if any enemy is colliding with the player (continuous movement)
-   * Uses floating-point distance with 0.5 tile tolerance
+   * Check if any enemy is on the same tile as the player.
    */
   checkCollision(playerX, playerY) {
-    return this.enemies.some(e => {
-      const dx = Math.abs(e.posX - playerX);
-      const dy = Math.abs(e.posY - playerY);
-      return dx < 0.5 && dy < 0.5;
-    });
+    return this.enemies.some(e =>
+      Math.round(e.posX) === playerX && Math.round(e.posY) === playerY
+    );
   }
 
   getEnemies() {

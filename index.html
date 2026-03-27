@@ -171,6 +171,7 @@
     </div>
     <div id="actions">
       <div id="btn-sword" class="action-btn" aria-label="Usar espada">⚔</div>
+      <div id="btn-sprint" class="action-btn" aria-label="Sprint">⚡</div>
     </div>
     <div id="info-btn" aria-label="Información">i</div>
   </div>
@@ -179,39 +180,33 @@
   <div id="info-overlay" role="dialog" aria-modal="true" aria-label="Información del juego">
     <div id="info-close" aria-label="Cerrar">✕</div>
     <h2>— CONTROLES —</h2>
-    <div class="info-row"><span class="info-key">↑↓←→</span><span class="info-desc">Mover al jugador</span></div>
-    <div class="info-row"><span class="info-key">⚔</span><span class="info-desc">Usar espada (desactiva trampas)</span></div>
+    <div class="info-row"><span class="info-key">↑↓←→ / WASD</span><span class="info-desc">Mover (mantener presionado)</span></div>
+    <div class="info-row"><span class="info-key">SHIFT / ⚡</span><span class="info-desc">Sprint (Cooldown: 4s)</span></div>
+    <div class="info-row"><span class="info-key">E / ⚔</span><span class="info-desc">Usar espada</span></div>
     <h2>— OBJETIVO —</h2>
-    <div class="info-row"><span class="info-desc">🟢 Llega a la salida roja para avanzar.</span></div>
-    <div class="info-row"><span class="info-desc">🔦 Usa antorchas para ampliar tu visión.</span></div>
-    <div class="info-row"><span class="info-desc">🗝 Recoge llaves para abrir puertas.</span></div>
-    <div class="info-row"><span class="info-desc">🔵 Activa palancas en el orden correcto.</span></div>
-    <div class="info-row"><span class="info-desc">🛡 El escudo absorbe un golpe.</span></div>
+    <div class="info-row"><span class="info-desc">🟢 Llega a la salida roja para avanzar al siguiente nivel.</span></div>
+    <div class="info-row"><span class="info-desc">✨ Recoge objetos para sobrevivir en el laberinto.</span></div>
+    <div class="info-row"><span class="info-desc">⚡ Usa sprint para escapar de enemigos veloces.</span></div>
+    <div class="info-row"><span class="info-desc">⚠️ ¡Evita los enemigos inteligentes del laberinto!</span></div>
     <div class="info-row"><span class="info-desc">💣 ¡Huye de las minas antes de que exploten!</span></div>
     <h2>— LEYENDA —</h2>
-    <div class="info-row"><span class="info-icon">👻</span><span class="info-desc">Kiro (tú)</span></div>
-    <div class="info-row"><span class="info-icon">🟧</span><span class="info-desc">Lambda / API Gateway (nv.1)</span></div>
-    <div class="info-row"><span class="info-icon">🟩</span><span class="info-desc">S3 (nv.1)</span></div>
-    <div class="info-row"><span class="info-icon">🟦</span><span class="info-desc">DynamoDB (nv.1)</span></div>
-    <div class="info-row"><span class="info-icon">🟥</span><span class="info-desc">IAM (nv.1)</span></div>
-    <div class="info-row"><span class="info-icon">🟪</span><span class="info-desc">CloudWatch / SNS (nv.1)</span></div>
-    <div class="info-row"><span class="info-icon">🦇</span><span class="info-desc">Murciélago (nv.2)</span></div>
-    <div class="info-row"><span class="info-icon">🕷</span><span class="info-desc">Araña (nv.2)</span></div>
+    <div class="info-row"><span class="info-icon">👻</span><span class="info-desc">Kiro - Fantasma kawaii (tú ♡)</span></div>
+    <div class="info-row"><span class="info-icon">💀</span><span class="info-desc">Esqueleto - Patrulla y te persigue</span></div>
+    <div class="info-row"><span class="info-icon">🐂</span><span class="info-desc">Minotauro - Cazador incansable</span></div>
+    <div class="info-row"><span class="info-icon">👁</span><span class="info-desc">Espectro - Se teletransporta</span></div>
     <div class="info-row"><span class="info-icon">🟢</span><span class="info-desc">Entrada</span></div>
     <div class="info-row"><span class="info-icon">🔴</span><span class="info-desc">Salida</span></div>
     <div class="info-row"><span class="info-icon">🟪</span><span class="info-desc">Puerta cerrada</span></div>
     <div class="info-row"><span class="info-icon">⬛</span><span class="info-desc">Puerta abierta</span></div>
-    <div class="info-row"><span class="info-icon">🔥</span><span class="info-desc">Trampa péndulo</span></div>
-    <div class="info-row"><span class="info-icon">💥</span><span class="info-desc">Proyectil</span></div>
-    <div class="info-row"><span class="info-icon">⚠</span><span class="info-desc">Pared / pinchos</span></div>
-    <div class="info-row"><span class="info-icon">💣</span><span class="info-desc">Mina (explota en 3s al pisarla)</span></div>
+    <div class="info-row"><span class="info-icon">🔥</span><span class="info-desc">Péndulo con pinchos mortales</span></div>
+    <div class="info-row"><span class="info-icon">💥</span><span class="info-desc">Proyectil de fuego</span></div>
+    <div class="info-row"><span class="info-icon">⚠</span><span class="info-desc">Pared móvil con púas</span></div>
+    <div class="info-row"><span class="info-icon">💣</span><span class="info-desc">Mina (explota después de 2s)</span></div>
     <div class="info-row"><span class="info-icon">🧪</span><span class="info-desc">Poción de vida</span></div>
     <div class="info-row"><span class="info-icon">🔦</span><span class="info-desc">Antorcha</span></div>
     <div class="info-row"><span class="info-icon">🗝</span><span class="info-desc">Llave</span></div>
     <div class="info-row"><span class="info-icon">⚔</span><span class="info-desc">Espada</span></div>
     <div class="info-row"><span class="info-icon">🛡</span><span class="info-desc">Escudo</span></div>
-    <div class="info-row"><span class="info-icon">🔘</span><span class="info-desc">Palanca (apagada)</span></div>
-    <div class="info-row"><span class="info-icon">🔆</span><span class="info-desc">Palanca (encendida)</span></div>
   </div>
 
   <script type="module" src="/src/main.js"></script>
@@ -222,20 +217,80 @@
     function addMoveBtn(id, key) {
       var el = document.getElementById(id);
       if (!el) return;
+      
+      // Touch start - activate control
       el.addEventListener('touchstart', function(e) {
         e.preventDefault();
         window.mobileCtrl[key] = true;
         window.dispatchEvent(new Event('mobile-tap'));
       }, { passive: false });
-      // Support click for desktop testing
-      el.addEventListener('mousedown', function() { window.mobileCtrl[key] = true; });
+      
+      // Touch end - deactivate control
+      el.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        window.mobileCtrl[key] = false;
+      }, { passive: false });
+      
+      // Touch cancel - deactivate control
+      el.addEventListener('touchcancel', function(e) {
+        e.preventDefault();
+        window.mobileCtrl[key] = false;
+      }, { passive: false });
+      
+      // Support mouse for desktop testing
+      el.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        window.mobileCtrl[key] = true;
+      });
+      
+      el.addEventListener('mouseup', function(e) {
+        e.preventDefault();
+        window.mobileCtrl[key] = false;
+      });
+      
+      el.addEventListener('mouseleave', function(e) {
+        window.mobileCtrl[key] = false;
+      });
     }
 
     addMoveBtn('btn-up',    'up');
     addMoveBtn('btn-down',  'down');
     addMoveBtn('btn-left',  'left');
     addMoveBtn('btn-right', 'right');
-    addMoveBtn('btn-sword', 'sword');
+    
+    // Sword button behaves differently - single tap
+    var swordBtn = document.getElementById('btn-sword');
+    if (swordBtn) {
+      swordBtn.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        window.mobileCtrl.sword = true;
+        setTimeout(function() { window.mobileCtrl.sword = false; }, 50);
+        window.dispatchEvent(new Event('mobile-tap'));
+      }, { passive: false });
+      
+      swordBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.mobileCtrl.sword = true;
+        setTimeout(function() { window.mobileCtrl.sword = false; }, 50);
+      });
+    }
+    
+    // Sprint button - single tap activation
+    var sprintBtn = document.getElementById('btn-sprint');
+    if (sprintBtn) {
+      sprintBtn.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        window.mobileCtrl.sprint = true;
+        setTimeout(function() { window.mobileCtrl.sprint = false; }, 50);
+        window.dispatchEvent(new Event('mobile-tap'));
+      }, { passive: false });
+      
+      sprintBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.mobileCtrl.sprint = true;
+        setTimeout(function() { window.mobileCtrl.sprint = false; }, 50);
+      });
+    }
 
     // ── Info overlay ────────────────────────────────────────────────────────────
     var infoOverlay = document.getElementById('info-overlay');

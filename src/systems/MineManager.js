@@ -1,13 +1,13 @@
 /**
  * Manages land mines: static hazards that activate when the player steps on them
- * and explode after a 3-second countdown, damaging anything in their blast radius.
+ * and explode after a 2-second countdown, damaging anything in their blast radius.
  */
 export default class MineManager {
   constructor(mineDefs) {
     this.mines = (mineDefs || []).map(def => ({
       ...def,
       activated: false,
-      explodeTimer: 3000, // ms remaining once activated
+      explodeTimer: 2000, // ms remaining once activated
       exploded: false,
       radius: def.radius || 1  // blast radius in tiles (Chebyshev distance)
     }));

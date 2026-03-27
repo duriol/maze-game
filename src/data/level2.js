@@ -1,4 +1,4 @@
-// Level 2 — 20x20 — Medium
+// Level 2 - Skeletons + Minotaur - Medium challenge
 export default {
   id: 2,
   width: 20,
@@ -29,46 +29,65 @@ export default {
   exit: { x: 18, y: 19 },
 
   traps: [
-    { id: 't1', type: 'PENDULUM',    path: [{x:5,y:5},{x:5,y:9}],   speed: 1.5 },
-    { id: 't2', type: 'PROJECTILE',  path: [{x:9,y:7},{x:15,y:7}],  speed: 3.0 },
-    { id: 't3', type: 'MOVING_WALL', path: [{x:3,y:13},{x:7,y:13}], speed: 1.2 },
-    { id: 't4', type: 'SPIKE',       path: [{x:13,y:11},{x:13,y:13}], speed: 1.0 }
+    { id: 't1', type: 'PENDULUM',    path: [{x:5,y:5},{x:5,y:9}],   speed: 1.1 },
+    { id: 't2', type: 'PROJECTILE',  path: [{x:9,y:7},{x:15,y:7}],  speed: 2.2 },
+    { id: 't3', type: 'MOVING_WALL', path: [{x:3,y:13},{x:7,y:13}], speed: 0.9 },
+    { id: 't4', type: 'SPIKE',       path: [{x:13,y:11},{x:13,y:13}], speed: 0.8 }
   ],
 
   mines: [
     { id: 'm1', gridX: 3,  gridY: 9,  radius: 1 },
-    { id: 'm2', gridX: 17, gridY: 5,  radius: 1 },
-    { id: 'm3', gridX: 9,  gridY: 15, radius: 1 }
+    { id: 'm2', gridX: 17, gridY: 5,  radius: 1 }
   ],
 
+  // 3 Skeletons + 1 Minotaur - Increased difficulty
   enemies: [
-    { id: 'e1', patrolPath: [{x:3,y:7},{x:3,y:11},{x:7,y:11},{x:7,y:7}], speed: 1.0 },
-    { id: 'e2', patrolPath: [{x:13,y:5},{x:17,y:5},{x:17,y:9},{x:13,y:9}], speed: 1.2 }
+    {
+      id: 'skeleton1',
+      type: 'SKELETON',
+      startX: 3,
+      startY: 7,
+      patrolPath: [{x:3,y:7},{x:3,y:11},{x:7,y:11},{x:7,y:7}],
+      speed: 0.7,
+      visionRange: 3
+    },
+    {
+      id: 'skeleton2',
+      type: 'SKELETON',
+      startX: 13,
+      startY: 5,
+      patrolPath: [{x:13,y:5},{x:17,y:5},{x:17,y:9},{x:13,y:9}],
+      speed: 0.75,
+      visionRange: 3
+    },
+    {
+      id: 'skeleton3',
+      type: 'SKELETON',
+      startX: 9,
+      startY: 15,
+      patrolPath: [{x:9,y:15},{x:13,y:15},{x:13,y:17},{x:9,y:17}],
+      speed: 1.0,
+      visionRange: 3
+    },
+    {
+      id: 'minotaur1',
+      type: 'MINOTAUR',
+      startX: 9,
+      startY: 9,
+      patrolPath: [{x:9,y:9},{x:11,y:9},{x:11,y:11},{x:9,y:11}],
+      speed: 0.5,
+      huntRange: 5
+    }
   ],
 
   items: [
     { id: 'i1', type: 'HEALTH_POTION', gridX: 9,  gridY: 3  },
     { id: 'i2', type: 'TORCH',         gridX: 15, gridY: 11 },
     { id: 'i3', type: 'KEY',           gridX: 7,  gridY: 15 },
-    { id: 'i4', type: 'SWORD',         gridX: 11, gridY: 9  }
+    { id: 'i4', type: 'SWORD',         gridX: 11, gridY: 9  },
+    { id: 'i5', type: 'SHIELD',        gridX: 5,  gridY: 3  }
   ],
 
-  puzzles: [
-    {
-      id: 'p1',
-      switches: [
-        { id: 's1', gridX: 5,  gridY: 3,  activationOrder: 0 },
-        { id: 's2', gridX: 11, gridY: 7,  activationOrder: 1 },
-        { id: 's3', gridX: 15, gridY: 13, activationOrder: 2 }
-      ],
-      correctSequence: ['s1', 's2', 's3'],
-      doorId: { x: 18, y: 18 }
-    }
-  ],
-
-  wallHints: [
-    { x: 4,  y: 3,  text: 'Tres palancas guardan el paso sur. Actívalas en orden: noroeste, centro, sureste.' },
-    { x: 10, y: 7,  text: 'Segunda palanca encontrada. La tercera está al sureste, cerca de la salida.' },
-    { x: 14, y: 13, text: 'Última palanca. Actívala y el camino a la salida quedará abierto.' }
-  ]
+  puzzles: [],
+  wallHints: []
 };

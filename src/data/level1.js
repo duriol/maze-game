@@ -1,11 +1,10 @@
 // Tile types: 0=FLOOR, 1=WALL, 2=ENTRANCE, 3=EXIT, 4=DOOR_CLOSED
-// Level 1 — 15x15 — Easy
+// Level 1 - Tutorial - Easy navigation with 2 SKELETONS
 
 export default {
   id: 1,
   width: 15,
   height: 15,
-  // Row 0 is top, row 14 is bottom
   tiles: [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     [1,2,0,0,1,0,0,0,1,0,0,0,0,0,1],
@@ -27,41 +26,43 @@ export default {
   exit: { x: 13, y: 14 },
 
   traps: [
-    // Pendulum trap — swings between two points
-    { id: 't1', type: 'PENDULUM', path: [{x:5,y:5},{x:5,y:7}], speed: 1.2 },
-    // Moving wall
-    { id: 't2', type: 'MOVING_WALL', path: [{x:9,y:3},{x:11,y:3}], speed: 1.0 }
+    { id: 't1', type: 'PENDULUM', path: [{x:5,y:5},{x:5,y:7}], speed: 0.9 },
+    { id: 't2', type: 'MOVING_WALL', path: [{x:9,y:3},{x:11,y:3}], speed: 0.8 }
   ],
 
   mines: [
-    { id: 'm1', gridX: 5, gridY: 9,  radius: 1 },
-    { id: 'm2', gridX: 12, gridY: 11, radius: 1 }
+    { id: 'm1', gridX: 5, gridY: 9,  radius: 1 }
   ],
 
+  // New enemy system - Skeletons with basic patrol and chase AI
   enemies: [
-    { id: 'e1', patrolPath: [{x:3,y:9},{x:3,y:11},{x:5,y:11},{x:5,y:9}], speed: 0.8 }
+    {
+      id: 'skeleton1',
+      type: 'SKELETON',
+      startX: 3,
+      startY: 9,
+      patrolPath: [{x:3,y:9},{x:3,y:11},{x:5,y:11},{x:5,y:9}],
+      speed: 0.6,
+      visionRange: 3
+    },
+    {
+      id: 'skeleton2',
+      type: 'SKELETON',
+      startX: 11,
+      startY: 5,
+      patrolPath: [{x:11,y:5},{x:13,y:5},{x:13,y:7},{x:11,y:7}],
+      speed: 0.65,
+      visionRange: 2
+    }
   ],
 
   items: [
     { id: 'i1', type: 'HEALTH_POTION', gridX: 7, gridY: 3 },
     { id: 'i2', type: 'TORCH',         gridX: 11, gridY: 7 },
-    { id: 'i3', type: 'KEY',           gridX: 9, gridY: 11 }
+    { id: 'i3', type: 'KEY',           gridX: 9, gridY: 11 },
+    { id: 'i4', type: 'SWORD',         gridX: 3, gridY: 3 }
   ],
 
-  puzzles: [
-    {
-      id: 'p1',
-      switches: [
-        { id: 's1', gridX: 3, gridY: 3, activationOrder: 0 },
-        { id: 's2', gridX: 7, gridY: 7, activationOrder: 1 }
-      ],
-      correctSequence: ['s1', 's2'],
-      doorId: { x: 13, y: 12 }  // DOOR_CLOSED tile position
-    }
-  ],
-
-  wallHints: [
-    { x: 2, y: 5,  text: 'Hay una palanca al norte de aquí. Actívala primero antes que la del centro.' },
-    { x: 8, y: 9,  text: 'La segunda palanca está al noreste. Con ambas activas, se abre el paso al sur. Cuidado: el suelo oculta trampas.' }
-  ]
+  puzzles: [],
+  wallHints: []
 };

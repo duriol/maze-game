@@ -1,7 +1,7 @@
-// True isometric tile dimensions (2:1 ratio)
-export const TILE_W = 64;   // full diamond width
-export const TILE_H = 32;   // full diamond height (half of width)
-export const WALL_H = 40;   // visible wall face height in pixels
+// Isometric projection with 30-degree angle (2:1 ratio)
+export const TILE_W = 80;   // full diamond width (increased for more dramatic perspective)
+export const TILE_H = 40;   // full diamond height (half of width)
+export const WALL_H = 32;   // visible wall face height in pixels (reduced so player is more visible)
 
 /**
  * Convert grid coordinates to isometric screen coordinates.
