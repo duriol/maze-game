@@ -58,13 +58,14 @@ export default class GameScene extends Phaser.Scene {
     // Transition overlay (black rect, fades in/out)
     this._fadeRect = this.add.graphics().setDepth(900);
 
-    // Draw everything sized to the current viewport (and re-draw on resize)
-    this._applyLayout(this.scale.width, this.scale.height);
-
     // Listen for viewport resize / orientation changes (important for mobile)
     this.scale.on('resize', this._onResize, this);
 
     this._loadLevel(this.startLevel, this.startLives);
+
+    // Apply layout after loadLevel so the renderer (created inside _loadLevel)
+    // is also correctly sized for the current viewport right from the first frame.
+    this._applyLayout(this.scale.width, this.scale.height);
     this._initSounds();
 
     // Keyboard input
@@ -129,9 +130,15 @@ export default class GameScene extends Phaser.Scene {
   }
 
   // ── Layout helpers ────────────────────────────────────────────────────────────
-  // Called once at create() and again whenever the viewport resizes (mobile
-  // orientation changes, browser chrome showing/hiding, etc.).
+  // Called once at create() (after _loadLevel) and again whenever the viewport
+  // resizes (mobile orientation changes, browser chrome showing/hiding, etc.).
   _applyLayout(width, height) {
+    // Guard against degenerate sizes (e.g. zero during boot edge-cases).
+    // Fall back to the current scale or window dimensions before giving up.
+    if (!width  || width  <= 0) width  = this.scale.width  || window.innerWidth;
+    if (!height || height <= 0) height = this.scale.height || window.innerHeight;
+    if (!width  || width  <= 0 || !height || height <= 0) return;
+
     const TOP_BAR = 64;
     const playX = this._panelW;
     const playY = TOP_BAR;
@@ -151,14 +158,15 @@ export default class GameScene extends Phaser.Scene {
     this._fadeRect.fillRect(0, 0, width, height);
 
     // Update renderer dimensions if it already exists (e.g. after orientation change).
-    // _applyLayout is also called before _loadLevel in create(), so the guard is needed.
     if (this.renderer) {
       this.renderer.resize(width, height);
     }
   }
 
   _onResize(gameSize) {
-    this._applyLayout(gameSize.width, gameSize.height);
+    const w = (gameSize && gameSize.width  > 0) ? gameSize.width  : (this.scale.width  || window.innerWidth);
+    const h = (gameSize && gameSize.height > 0) ? gameSize.height : (this.scale.height || window.innerHeight);
+    this._applyLayout(w, h);
   }
 
   _beep(freq, type, duration, volume = 0.3, delay = 0) {
