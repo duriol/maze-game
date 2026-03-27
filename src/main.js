@@ -15,7 +15,9 @@ const config = {
     ? {
         mode: Phaser.Scale.RESIZE,
         parent: document.body,
-        autoCenter: Phaser.Scale.CENTER_BOTH
+        width: window.innerWidth,
+        height: window.innerHeight,
+        autoCenter: Phaser.Scale.NO_CENTER
       }
     : {
         mode: Phaser.Scale.EXPAND,
